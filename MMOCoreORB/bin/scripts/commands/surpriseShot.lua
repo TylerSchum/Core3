@@ -58,7 +58,7 @@ SurpriseShotCommand = {
 
 	combatSpam = "surpriseshot",
 
-	weaponType = RIFLEWEAPON,
+	weaponType = RIFLEWEAPON + PISTOLWEAPON + CARBINEWEAPON,
 	range = -1,
 }
 
