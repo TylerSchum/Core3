@@ -67,27 +67,28 @@ public:
 			if (forceSpace <= 0) //Cannot Force Drain if attacker can't hold any more Force.
 				return GENERALERROR;
 
-			if (playerGhost->getForcePower() < forceCost) {
-				creature->sendSystemMessage("@jedi_spam:no_force_power"); //You do not have sufficient Force power to perform that action.
-				return GENERALERROR;
+			int forceDrain = 0;
+
+			if (targetCreature.isPlayerCreature()) {
+				int targetForce = targetGhost->getForcePower();
+				if (playerGhost->getForcePower() < forceCost) {
+					creature->sendSystemMessage("@jedi_spam:no_force_power"); //You do not have sufficient Force power to perform that action.
+					return GENERALERROR;
+				}
+				int drain = System::random(maxDamage);
+				int forceDrain = targetForce >= drain ? drain : targetForce; //Drain whatever Force the target has, up to max.
+				targetGhost->setForcePower(targetGhost->getForcePower() - forceDrain);
+			} else {
+				int minDrain = (maxDamage * 4) / 2
+				int maxDrain = maxDamage * 4;
+				int drain = minDrain + System::random(maxDrain - minDrain + 1);
+				forceDrain = drain;
 			}
-
-			int drain = System::random(maxDamage);
-
-			int targetForce = targetGhost->getForcePower();
-			if (targetForce <= 0) {
-				creature->sendSystemMessage("@jedi_spam:target_no_force"); //That target does not have any Force Power.
-				return GENERALERROR;
-			}
-
-			int forceDrain = targetForce >= drain ? drain : targetForce; //Drain whatever Force the target has, up to max.
-
 			if (forceDrain > forceSpace) {
 				forceDrain = forceSpace; //Drain only what attacker can hold in their own Force pool.
 			}
-
 			playerGhost->setForcePower(playerGhost->getForcePower() + (forceDrain - forceCost));
-			targetGhost->setForcePower(targetGhost->getForcePower() - forceDrain);
+
 
 			uint32 animCRC = getAnimationString().hashCode();
 			creature->doCombatAnimation(targetCreature, animCRC, 0x1, 0xFF);
