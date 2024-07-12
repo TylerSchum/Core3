@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 if [ -n "$1" ]; then
     arg1=$(type -P $1)
 

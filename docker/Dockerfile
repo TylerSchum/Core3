@@ -113,6 +113,8 @@ RUN set -xe; \
     apt-get autoremove -y; \
     rm -rf /var/lib/apt/lists/* /var/log/dpkg.log* /var/log/apt/*;
 
+RUN sudo apt-get update && sudo apt-get install -y default-jdk
+
 ENV RUN_USER=swgemu \
     HOME_DIR=/home/swgemu \
     SHELL=/bin/bash \
@@ -137,6 +139,8 @@ ENV PATH=${HOME_DIR}/bin:/usr/local/bin:${PATH}
 EXPOSE ${STATUSPORT}/tcp ${LOGINPORT}/udp ${PINGPORT}/udp ${ZONESERVERPORT}/udp
 
 COPY files /
+
+RUN sed -i 's/\r$//' /run.sh && find /firstboot -type f -exec sed -i 's/\r$//' {} +
 
 VOLUME ${HOME_DIR}
 

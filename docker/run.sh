@@ -42,6 +42,7 @@ docker run -it \
     --restart=unless-stopped \
     --env-file env-base \
     --env-file env-run \
+    --env-file env-path \
     -p ${SSHPORT}:${SSHPORT}/tcp \
     -p ${LOGINPORT}:${LOGINPORT}/udp \
     -p ${STATUSPORT}:${STATUSPORT}/tcp \
