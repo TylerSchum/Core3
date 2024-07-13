@@ -737,3 +737,5 @@ includeFile("events/ServerEventAutomation.lua")
 
 -- Custom content - Loads last to allow for overrides
 includeFile("../custom_scripts/screenplays/screenplays.lua")
+
+includeFile("tasks/naboo/general_store_vendor.lua")
