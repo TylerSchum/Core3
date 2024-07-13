@@ -513,6 +513,48 @@ class PlayerManager extends Observer implements Logger {
 	}
 
 	/**
+	 * Enhances the target character with doc/ent buffs
+	 * @pre { player is locked }
+	 * @post { player is locked }
+	 */
+	public native void enhanceCharacterDocBuff(CreatureObject player);
+
+	/**
+	 * Enhances the target character with doc/ent buffs
+	 * @pre { player is locked }
+	 * @post { player is locked }
+	 */
+	public native void enhanceCharacterDocBuffTHREE(CreatureObject player);
+
+	/**
+	 * Enhances the target character with doc/ent buffs
+	 * @pre { player is locked }
+	 * @post { player is locked }
+	 */
+	public native void enhanceCharacterEntBuffONE(CreatureObject player);
+
+	/**
+	 * Enhances the target character with doc/ent buffs
+	 * @pre { player is locked }
+	 * @post { player is locked }
+	 */
+	public native void enhanceCharacterEntBuffTWO(CreatureObject player);
+
+	/**
+	 * Enhances the target character with doc/ent buffs
+	 * @pre { player is locked }
+	 * @post { player is locked }
+	 */
+	public native void enhanceSelfDance(CreatureObject player);
+
+	/**
+	 * Enhances the target character with doc/ent buffs
+	 * @pre { player is locked }
+	 * @post { player is locked }
+	 */
+	public native void enhanceSelfMusic(CreatureObject player);	
+
+	/**
 	 * Sends a confirmation box to the student asking if they want to learn the skill.
 	 * @pre student crosslocked with teacher
 	 * @post student crosslocked with teacher

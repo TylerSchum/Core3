@@ -6197,17 +6197,151 @@ bool PlayerManagerImplementation::doEnhanceCharacter(uint32 crc, CreatureObject*
 	if (player == nullptr)
 		return false;
 
-	if (player->hasBuff(crc))
-		return false;
+	int selfMedBuff = 1500;
+	int selfStrengthMind = player->getBaseHAM(CreatureAttribute::MIND) * 1.25;
+	int selfStrengthFocus = player->getBaseHAM(CreatureAttribute::FOCUS) * 1.25;
+	int selfStrengthWill = player->getBaseHAM(CreatureAttribute::WILLPOWER) * 1.25;
+	int selfDuration = 480;
 
-	ManagedReference<Buff*> buff = new Buff(player, crc, duration, buffType);
+	message = message && doEnhanceCharacter(0x98321369, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 0);
+	message = message && doEnhanceCharacter(0x815D85C5, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 1); 
+	message = message && doEnhanceCharacter(0x7F86D2C6, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 2); 
+	message = message && doEnhanceCharacter(0x4BF616E2, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 3); 
+	message = message && doEnhanceCharacter(0x71B5C842, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 4); 
+	message = message && doEnhanceCharacter(0xED0040D9, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 5);
 
-	Locker locker(buff);
-
-	buff->setAttributeModifier(attribute, amount);
-	player->addBuff(buff);
+	if (message && player->isPlayerCreature())
+		player->sendSystemMessage("You receive Doctor buffs.");
 
 	return true;
+}
+
+void PlayerManagerImplementation::enhanceCharacterDocBuff(CreatureObject* player) {
+	if (player == nullptr)
+		return;
+
+	bool message = true;
+	int selfMedBuff = 2500;
+	int selfStrengthMind = player->getBaseHAM(CreatureAttribute::MIND) * 1.25;
+	int selfStrengthFocus = player->getBaseHAM(CreatureAttribute::FOCUS) * 1.25;
+	int selfStrengthWill = player->getBaseHAM(CreatureAttribute::WILLPOWER) * 1.25;
+	int selfDuration =	480; //8 hr ;
+
+	message = message && doEnhanceCharacter(0x98321369, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 0);
+	message = message && doEnhanceCharacter(0x815D85C5, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 1);
+	message = message && doEnhanceCharacter(0x7F86D2C6, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 2);
+	message = message && doEnhanceCharacter(0x4BF616E2, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 3);
+	message = message && doEnhanceCharacter(0x71B5C842, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 4);
+	message = message && doEnhanceCharacter(0xED0040D9, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 5);
+
+	if (message && player->isPlayerCreature())
+		player->sendSystemMessage("You receive Doctor buffs.");
+}
+
+void PlayerManagerImplementation::enhanceCharacterDocBuffTHREE(CreatureObject* player) {
+	if (player == nullptr)
+		return;
+
+	bool message = true;
+	int selfMedBuff = 3500;
+	int selfStrengthMind = player->getBaseHAM(CreatureAttribute::MIND) * 1.25;
+	int selfStrengthFocus = player->getBaseHAM(CreatureAttribute::FOCUS) * 1.25;
+	int selfStrengthWill = player->getBaseHAM(CreatureAttribute::WILLPOWER) * 1.25;
+	int selfDuration = 480;
+
+	message = message && doEnhanceCharacter(0x98321369, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 0);
+	message = message && doEnhanceCharacter(0x815D85C5, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 1);
+	message = message && doEnhanceCharacter(0x7F86D2C6, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 2);
+	message = message && doEnhanceCharacter(0x4BF616E2, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 3);
+	message = message && doEnhanceCharacter(0x71B5C842, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 4);
+	message = message && doEnhanceCharacter(0xED0040D9, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 5);
+
+	if (message && player->isPlayerCreature())
+		player->sendSystemMessage("You receive Doctor buffs.");
+}
+
+void PlayerManagerImplementation::enhanceCharacterEntBuffONE(CreatureObject* player) {
+	if (player == nullptr)
+		return;
+
+	bool message = true;
+	int selfMedBuff = 2000;
+	int selfStrengthMind = player->getBaseHAM(CreatureAttribute::MIND) * 1.25;
+	int selfStrengthFocus = player->getBaseHAM(CreatureAttribute::FOCUS) * 1.25;
+	int selfStrengthWill = player->getBaseHAM(CreatureAttribute::WILLPOWER) * 1.25;
+	int selfDuration = 480;
+	message = message && doEnhanceCharacter(0x11C1772E, player, selfStrengthMind, selfDuration * 60, BuffType::PERFORMANCE, 6);
+	message = message && doEnhanceCharacter(0x2E77F586, player, selfStrengthFocus, selfDuration * 60, BuffType::PERFORMANCE, 7);
+	message = message && doEnhanceCharacter(0x3EC6FCB6, player, selfStrengthWill, selfDuration * 60, BuffType::PERFORMANCE, 8);
+
+	if (message && player->isPlayerCreature())
+		player->sendSystemMessage("You receive Mind buffs.");
+}
+
+void PlayerManagerImplementation::enhanceCharacterEntBuffTWO(CreatureObject* player) {
+	if (player == nullptr)
+		return;
+
+	bool message = true;
+	int selfMedBuff = 2000;
+	int selfStrengthMind = player->getBaseHAM(CreatureAttribute::MIND) * 2.5;
+	int selfStrengthFocus = player->getBaseHAM(CreatureAttribute::FOCUS) * 2.5;
+	int selfStrengthWill = player->getBaseHAM(CreatureAttribute::WILLPOWER) * 2.5;
+	int selfDuration = 480;
+
+	message = message && doEnhanceCharacter(0x11C1772E, player, selfStrengthMind, selfDuration * 60, BuffType::PERFORMANCE, 6);
+	message = message && doEnhanceCharacter(0x2E77F586, player, selfStrengthFocus, selfDuration * 60, BuffType::PERFORMANCE, 7);
+	message = message && doEnhanceCharacter(0x3EC6FCB6, player, selfStrengthWill, selfDuration * 60, BuffType::PERFORMANCE, 8);
+
+	if (message && player->isPlayerCreature())
+		player->sendSystemMessage("You receive Mind buffs.");
+}
+
+void PlayerManagerImplementation::enhanceSelfDance(CreatureObject* player) {
+	if (player == nullptr)
+		return;
+
+	bool message = true;
+
+	float skillmod = (player->getSkillMod("healing_dance_mind") + player->getSkillMod("healing_music_mind")) * .01;
+
+	int selfStrength = (player->getBaseHAM(CreatureAttribute::MIND) * skillmod);
+	int selfStrengthFocus = (player->getBaseHAM(CreatureAttribute::FOCUS) * skillmod);
+	int selfStrengthWill = (player->getBaseHAM(CreatureAttribute::WILLPOWER) * skillmod);
+
+	int selfDuration =	8 * 60 * 60;
+
+	message = message && doEnhanceCharacter(0x11C1772E, player, selfStrength, selfDuration, BuffType::PERFORMANCE, 6);
+	message = message && doEnhanceCharacter(0x2E77F586, player, selfStrengthFocus, selfDuration, BuffType::PERFORMANCE, 7);
+	message = message && doEnhanceCharacter(0x3EC6FCB6, player, selfStrengthWill, selfDuration, BuffType::PERFORMANCE, 8);
+
+
+	if (message && player->isPlayerCreature())
+		player->sendSystemMessage("You receive Mind buffs.");
+
+}
+
+void PlayerManagerImplementation::enhanceSelfMusic(CreatureObject* player) {
+	if (player == nullptr)
+		return;
+
+	bool message = true;
+
+	float skillmod = (player->getSkillMod("healing_dance_mind") + player->getSkillMod("healing_music_mind")) * .01;
+
+	int selfStrength = (player->getBaseHAM(CreatureAttribute::MIND) * skillmod);
+	int selfStrengthFocus = (player->getBaseHAM(CreatureAttribute::FOCUS) * skillmod);
+	int selfStrengthWill = (player->getBaseHAM(CreatureAttribute::WILLPOWER) * skillmod);
+
+	int selfDuration = 8 * 60 * 60;
+
+	message = message && doEnhanceCharacter(0x11C1772E, player, selfStrength, selfDuration, BuffType::PERFORMANCE, 6);
+	message = message && doEnhanceCharacter(0x2E77F586, player, selfStrengthFocus, selfDuration, BuffType::PERFORMANCE, 7);
+	message = message && doEnhanceCharacter(0x3EC6FCB6, player, selfStrengthWill, selfDuration, BuffType::PERFORMANCE, 8);
+
+	if (message && player->isPlayerCreature())
+		player->sendSystemMessage("You receive Mind buffs.");
+
 }
 
 void PlayerManagerImplementation::enhanceCharacter(CreatureObject* player) {
