@@ -175,7 +175,7 @@ void MissionManagerImplementation::handleMissionListRequest(MissionTerminal* mis
 	}
 
 	if (missionTerminal->isBountyTerminal()) {
-		if (!player->hasSkill("combat_bountyhunter_novice")) {
+		if (!player->hasSkill("combat_bountyhunter_novice") && !player->hasSkill("force_title_jedi_rank_03")) {
 			player->sendSystemMessage("@mission/mission_generic:not_bounty_hunter_terminal");
 			return;
 		}
@@ -203,20 +203,7 @@ void MissionManagerImplementation::handleMissionListRequest(MissionTerminal* mis
 	if (missionBag == nullptr)
 		return;
 
-	int maximumNumberOfItemsInMissionBag = 12;
-
-
-	if (enableFactionalCraftingMissions) {
-		maximumNumberOfItemsInMissionBag += 6;
-	}
-
-	if (enableFactionalReconMissions) {
-		maximumNumberOfItemsInMissionBag += 6;
-	}
-
-	if (enableFactionalEntertainerMissions) {
-		maximumNumberOfItemsInMissionBag += 12; //Both musician and dancer.
-	}
+	int maximumNumberOfItemsInMissionBag = 24;
 
 	while (missionBag->getContainerObjectsSize() < maximumNumberOfItemsInMissionBag) {
 		ManagedReference<SceneObject*> mission = server->createObject(0x18e19914, 1); // empty mission
@@ -568,9 +555,9 @@ void MissionManagerImplementation::randomizeGeneralTerminalMissions(CreatureObje
 		//Clear mission type before calling mission generators.
 		mission->setTypeCRC(0);
 
-		if (i < 6) {
+		if (i < 12) {
 			randomizeGenericDestroyMission(player, mission, Factions::FACTIONNEUTRAL);
-		} else if (i < 12) {
+		} else if (i < 24) {
 			randomizeGenericDeliverMission(player, mission, Factions::FACTIONNEUTRAL);
 		}
 
@@ -597,9 +584,9 @@ void MissionManagerImplementation::randomizeArtisanTerminalMissions(CreatureObje
 		//Clear mission type before calling mission generators.
 		mission->setTypeCRC(0);
 
-		if (i < 6) {
+		if (i < 12) {
 			randomizeGenericSurveyMission(player, mission, Factions::FACTIONNEUTRAL);
-		} else if (i < 12) {
+		} else if (i < 24) {
 			randomizeGenericCraftingMission(player, mission, Factions::FACTIONNEUTRAL);
 		}
 
@@ -626,9 +613,9 @@ void MissionManagerImplementation::randomizeEntertainerTerminalMissions(Creature
 		//Clear mission type before calling mission generators.
 		mission->setTypeCRC(0);
 
-		if (i < 6) {
+		if (i < 12) {
 			randomizeGenericEntertainerMission(player, mission, Factions::FACTIONNEUTRAL, MissionTypes::DANCER);
-		} else if (i < 12) {
+		} else if (i < 24) {
 			randomizeGenericEntertainerMission(player, mission, Factions::FACTIONNEUTRAL, MissionTypes::MUSICIAN);
 		}
 
@@ -655,9 +642,9 @@ void MissionManagerImplementation::randomizeScoutTerminalMissions(CreatureObject
 		//Clear mission type before calling mission generators.
 		mission->setTypeCRC(0);
 
-		if (i < 6) {
+		if (i < 12) {
 			randomizeGenericReconMission(player, mission, Factions::FACTIONNEUTRAL);
-		} else if (i < 12) {
+		} else if (i < 24) {
 			randomizeGenericHuntingMission(player, mission, Factions::FACTIONNEUTRAL);
 		}
 
@@ -714,21 +701,21 @@ void MissionManagerImplementation::randomizeFactionTerminalMissions(CreatureObje
 		//Clear mission type before calling mission generators.
 		mission->setTypeCRC(0);
 
-		if (i < 6) {
+		if (i < 12) {
 			randomizeGenericDestroyMission(player, mission, faction);
-		} else if (i < 12) {
+		} else if (i < 24) {
 			randomizeGenericDeliverMission(player, mission, faction);
 		} else {
-			if (enableFactionalCraftingMissions && numberOfCraftingMissions < 6) {
+			if (enableFactionalCraftingMissions && numberOfCraftingMissions < 12) {
 				randomizeGenericCraftingMission(player, mission, faction);
 				numberOfCraftingMissions++;
-			} else if (enableFactionalReconMissions && numberOfReconMissions < 6) {
+			} else if (enableFactionalReconMissions && numberOfReconMissions < 12) {
 				randomizeGenericReconMission(player, mission, faction);
 				numberOfReconMissions++;
-			} else if (enableFactionalEntertainerMissions && numberOfDancerMissions < 6) {
+			} else if (enableFactionalEntertainerMissions && numberOfDancerMissions < 12) {
 				randomizeGenericEntertainerMission(player, mission, faction, MissionTypes::DANCER);
 				numberOfDancerMissions++;
-			} else if (enableFactionalEntertainerMissions && numberOfMusicianMissions < 6) {
+			} else if (enableFactionalEntertainerMissions && numberOfMusicianMissions < 12) {
 				randomizeGenericEntertainerMission(player, mission, faction, MissionTypes::MUSICIAN);
 				numberOfMusicianMissions++;
 			}
@@ -787,6 +774,12 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 	} else {
 		diffDisplay += playerLevel;
 	}
+	ManagedReference<PlayerObject* > ghost = player->getPlayerObject();
+	int levelSelect = ghost->getExperience("mission_level_choice")
+
+	if (levelSelect > 0) {
+		diffDisplay = levelSelect;
+	}
 
 	String building = lairTemplateObject->getMissionBuilding(difficulty);
 
@@ -814,6 +807,9 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 
 		int distance = destroyMissionBaseDistance + destroyMissionDifficultyDistanceFactor * difficultyLevel;
 		distance += System::random(destroyMissionRandomDistance) + System::random(destroyMissionDifficultyRandomDistance * difficultyLevel);
+		distance /= 2;
+		if (distance > 800)
+			distance = 800;
 		startPos = player->getWorldCoordinate((float)distance, (float)System::random(360), false);
 
 		if (zone->isWithinBoundaries(startPos)) {
@@ -988,7 +984,7 @@ void MissionManagerImplementation::randomizeGenericSurveyMission(CreatureObject*
 }
 
 void MissionManagerImplementation::randomizeGenericBountyMission(CreatureObject* player, MissionObject* mission, const uint32 faction, Vector<ManagedReference<PlayerBounty*>>* potentialTargets) {
-	if (!player->hasSkill("combat_bountyhunter_novice")) {
+	if (!player->hasSkill("combat_bountyhunter_novice" && !player->hasSkill("force_title_jedi_rank_03"))) {
 		player->sendSystemMessage("@mission/mission_generic:not_bounty_hunter_terminal");
 		return;
 	}
@@ -1001,7 +997,7 @@ void MissionManagerImplementation::randomizeGenericBountyMission(CreatureObject*
 
 	int level = 1;
 	int randomTexts = 25;
-	if (player->hasSkill("combat_bountyhunter_investigation_03")) {
+	if (player->hasSkill("combat_bountyhunter_investigation_03") || player->hasSkill("force_title_jedi_rank_03")) {
 		level = 3;
 	} else if (player->hasSkill("combat_bountyhunter_investigation_01")) {
 		level = 2;
@@ -1041,7 +1037,7 @@ void MissionManagerImplementation::randomizeGenericBountyMission(CreatureObject*
 			mission->setTargetOptionalTemplate("");
 
 			ManagedReference<CreatureObject*> creature = server->getObject(target->getTargetPlayerID()).castTo<CreatureObject*>();
-			String name = "";
+			String name = "unknown";
 
 			if (creature != nullptr && ConfigManager::instance()->getBool("Core3.MissionManager.AnonymousBountyTerminals", false)) {
 				if (creature->getFaction() == Factions::FACTIONIMPERIAL)
@@ -1094,14 +1090,7 @@ void MissionManagerImplementation::randomizeGenericBountyMission(CreatureObject*
 			mission->setMissionNumber(randTexts);
 
 			UnicodeString possibleCreatorName = StringIdManager::instance()->getStringId(String::hashCode("@" + stfFile + "m" + String::valueOf(randTexts) + "o"));
-			String creatorName = "";
-
-
-			if (!possibleCreatorName.isEmpty()) {
-				creatorName = possibleCreatorName.toString();
-			} else {
-				creatorName = nm->makeCreatureName();
-			}
+			String creatorName = "a Concerned Citizen";
 
 			mission->setCreatorName(creatorName);
 			mission->setMissionTitle(stfFile, "m" + String::valueOf(randTexts) + "t");
@@ -2059,6 +2048,9 @@ bool MissionManagerImplementation::isBountyValidForPlayer(CreatureObject* player
 	if (creature == nullptr)
 		return false;
 
+	if (creature->getFactionStatus() != FactionStatus::OVERT)
+		return false;
+
 	auto targetGhost = creature->getPlayerObject();
 	float terminalVisibilityThreshold = VisibilityManager::instance()->getTerminalVisThreshold();
 
@@ -2275,8 +2267,10 @@ int MissionManagerImplementation::getRealBountyReward(CreatureObject* creo, Play
 }
 
 String MissionManagerImplementation::getRandomBountyPlanet() {
-	int randomNumber = System::random(bhTargetZones.size() - 1);
-	return bhTargetZones.get(randomNumber);
+	// get player object
+	ManagedReference<SceneObject*> player = server->getObject("player");
+	// get player current planet
+	return player->getContainer()->getZone()->getPlanetManager()->getPlanetName();
 }
 
 bool MissionManagerImplementation::sendPlayerBountyDebug(CreatureObject* creature, CreatureObject* target) {

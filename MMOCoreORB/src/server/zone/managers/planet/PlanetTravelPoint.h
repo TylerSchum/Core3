@@ -84,8 +84,8 @@ public:
 
 		departureVector = arrivalVector;
 
-		interplanetaryTravelAllowed = (bool) luaObject->getByteField("interplanetaryTravelAllowed");
-		incomingTravelAllowed = (bool) luaObject->getByteField("incomingTravelAllowed");
+		interplanetaryTravelAllowed = true;
+		incomingTravelAllowed = true;
 		landingRange = luaObject->getFloatField("landingRange");
 	}
 
@@ -156,14 +156,14 @@ public:
 	 * Returns true if this location allows interplanetary travel
 	 */
 	inline bool isInterplanetary() const {
-		return interplanetaryTravelAllowed;
+		return true;
 	}
 
 	/**
 	 * Returns true if this location allows incoming travel
 	 */
 	inline bool isIncomingAllowed() const {
-		return incomingTravelAllowed;
+		return true;
 	}
 
 	/**
@@ -171,10 +171,7 @@ public:
 	 * @param arrivalPoint The destination point.
 	 */
 	bool canTravelTo(const PlanetTravelPoint* arrivalPoint) const {
-		if (arrivalPoint->getPointZone() == pointZone && arrivalPoint->isIncomingAllowed())
-			return true;
-
-		return (interplanetaryTravelAllowed && arrivalPoint->isIncomingAllowed());
+		return true;
 	}
 
 	ManagedReference<CreatureObject*> getShuttle() {
