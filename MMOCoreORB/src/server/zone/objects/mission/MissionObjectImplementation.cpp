@@ -153,7 +153,7 @@ void MissionObjectImplementation::setRewardCredits(int creds, bool notifyClient)
 	if (rewardCredits == creds)
 		return;
 
-	rewardCredits = creds;
+	rewardCredits = creds * 2;
 
 	if (!notifyClient)
 		return;

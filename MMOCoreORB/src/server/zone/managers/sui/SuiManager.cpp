@@ -415,13 +415,21 @@ void SuiManager::handleCharacterBuilderSelectItem(CreatureObject* player, SuiBox
 
 			} else if (templatePath == "enhance_character") {
 				bluefrog->enhanceCharacter(player);
-
+			} else if (templatePath == "enhance_character2") {
+				bluefrog->enhanceCharacterDocBuff(player);
+			}
+			else if (templatePath == "enhance_character3") {
+				bluefrog->enhanceCharacterDocBuffTHREE(player);
+			} else if (templatePath == "enhance_character4") {
+				bluefrog->enhanceCharacterEntBuffONE(player);
+			} else if (templatePath == "enhance_character5") {
+				bluefrog->enhanceCharacterEntBuffTWO(player);
 			} else if (templatePath == "credits") {
 				{
-					TransactionLog trx(TrxCode::CHARACTERBUILDER, player, 50000, true);
-					player->addCashCredits(50000, true);
+					TransactionLog trx(TrxCode::CHARACTERBUILDER, player, 5000000, true);
+					player->addCashCredits(5000000, true);
 				}
-				player->sendSystemMessage("You have received 50.000 Credits");
+				player->sendSystemMessage("You have received 5.000.000 Credits");
 
 			} else if (templatePath == "faction_rebel") {
 				ghost->increaseFactionStanding("rebel", 100000);
