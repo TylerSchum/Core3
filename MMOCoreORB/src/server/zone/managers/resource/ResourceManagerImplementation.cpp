@@ -210,11 +210,12 @@ ResourceContainer* ResourceManagerImplementation::harvestResource(CreatureObject
 	return resourceSpawner->harvestResource(player, type, quantity);
 }
 bool ResourceManagerImplementation::harvestResourceToPlayer(TransactionLog& trx, CreatureObject* player, ResourceSpawn* resourceSpawn, const int quantity) {
+	int multipliedQuantity = quantity * 20;
 	trx.addState("resourceID", resourceSpawn->getObjectID());
 	trx.addState("resourceType", resourceSpawn->getType());
 	trx.addState("resourceName", resourceSpawn->getName());
-	trx.addState("resourceQuantity", quantity);
-	return resourceSpawner->harvestResource(trx, player, resourceSpawn, quantity);
+	trx.addState("resourceQuantity", multipliedQuantity);
+	return resourceSpawner->harvestResource(trx, player, resourceSpawn, multipliedQuantity);
 }
 
 void ResourceManagerImplementation::sendSurvey(CreatureObject* playerCreature, const String& resname) {
