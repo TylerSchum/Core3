@@ -332,21 +332,6 @@ bool SkillManager::awardSkill(const String& skillName, CreatureObject* creature,
 			}
 		}
 
-		const SkillList* list = creature->getSkillList();
-
-		int totalSkillPointsWasted = 250;
-
-		for (int i = 0; i < list->size(); ++i) {
-			Skill* skill = list->get(i);
-
-			totalSkillPointsWasted -= skill->getSkillPointsRequired();
-		}
-
-		if (ghost->getSkillPoints() != totalSkillPointsWasted) {
-			creature->error("skill points mismatch calculated: " + String::valueOf(totalSkillPointsWasted) + " found: " + String::valueOf(ghost->getSkillPoints()));
-			ghost->setSkillPoints(totalSkillPointsWasted);
-		}
-
 		if (playerManager != nullptr) {
 			creature->setLevel(playerManager->calculatePlayerLevel(creature));
 		}
@@ -431,6 +416,11 @@ bool SkillManager::surrenderSkill(const String& skillName, CreatureObject* creat
 	if (skillName.beginsWith("force_") && !(JediManager::instance()->canSurrenderSkill(creature, skillName)))
 		return false;
 
+	if ((skill->getSkillName() == "force_title_jedi_rank_03") && (creature->hasSkill("force_rank_light_novice") || creature->hasSkill("force_rank_dark_novice"))){
+		creature->sendSystemMessage("You must first surrender all FRS skill boxes before you can surrender this box.");
+		return false;
+	}
+
 	removeSkillRelatedMissions(creature, skill);
 
 	creature->removeSkill(skill, notifyClient);
@@ -447,8 +437,6 @@ bool SkillManager::surrenderSkill(const String& skillName, CreatureObject* creat
 	}
 
 	if (ghost != nullptr) {
-		//Give the player the used skill points back.
-		ghost->addSkillPoints(skill->getSkillPointsRequired());
 
 		//Remove abilities but only if the creature doesn't still have a skill that grants the
 		//ability.  Some abilities are granted by multiple skills. For example Dazzle for dancers
@@ -491,21 +479,6 @@ bool SkillManager::surrenderSkill(const String& skillName, CreatureObject* creat
 
 		/// Update Force Power Max
 		ghost->recalculateForcePower();
-
-		const SkillList* list = creature->getSkillList();
-
-		int totalSkillPointsWasted = 250;
-
-		for (int i = 0; i < list->size(); ++i) {
-			Skill* skill = list->get(i);
-
-			totalSkillPointsWasted -= skill->getSkillPointsRequired();
-		}
-
-		if (ghost->getSkillPoints() != totalSkillPointsWasted) {
-			creature->error("skill points mismatch calculated: " + String::valueOf(totalSkillPointsWasted) + " found: " + String::valueOf(ghost->getSkillPoints()));
-			ghost->setSkillPoints(totalSkillPointsWasted);
-		}
 
 		ManagedReference<PlayerManager*> playerManager = creature->getZoneServer()->getPlayerManager();
 		if (playerManager != nullptr) {
@@ -552,6 +525,31 @@ bool SkillManager::surrenderSkill(const String& skillName, CreatureObject* creat
 
 	SkillModManager::instance()->verifySkillBoxSkillMods(creature);
 	JediManager::instance()->onSkillRevoked(creature, skill);
+
+	if (skill->getSkillName() == "social_politician_novice") {
+		awardSkill("social_politician_master", creature, true, true, true);
+	}
+
+	if (skill->getSkillName() == "crafting_merchant_novice") {
+		awardSkill("crafting_merchant_master", creature, true, true, true);
+	}
+
+	if (skill->getSkillName() == "force_rank_dark_rank_05" || creature->hasSkill("force_rank_dark_rank_05")) {
+		awardSkill("force_title_jedi_rank_04", creature, true, true, true);
+
+	}
+	if (skill->getSkillName() == "force_rank_light_rank_05" || creature->hasSkill("force_rank_light_rank_05")) {
+		awardSkill("force_title_jedi_rank_04", creature, true, true, true);
+
+	}
+	if (skill->getSkillName() == "force_rank_dark_rank_10" || creature->hasSkill("force_rank_dark_rank_10")) {
+		awardSkill("force_title_jedi_master", creature, true, true, true);
+
+	}
+	if (skill->getSkillName() == "force_rank_light_rank_10" || creature->hasSkill("force_rank_light_rank_10")) {
+		awardSkill("force_title_jedi_master", creature, true, true, true);
+
+	}
 
 	return true;
 }
@@ -715,10 +713,6 @@ bool SkillManager::canLearnSkill(const String& skillName, CreatureObject* creatu
 			}
 		}
 
-		//Check if player has enough skill points to learn the skill.
-		if (ghost->getSkillPoints() < skill->getSkillPointsRequired()) {
-			return false;
-		}
 	} else {
 		//Could not retrieve player object.
 		return false;

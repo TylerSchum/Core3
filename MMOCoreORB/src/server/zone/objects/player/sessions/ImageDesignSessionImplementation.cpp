@@ -201,7 +201,7 @@ void ImageDesignSessionImplementation::updateImageDesign(CreatureObject* updater
 
 			if (session != nullptr) {
 				session->migrateStats();
-				xpGranted = 2000;
+				xpGranted = 100000;
 
 #ifdef DEBUG_ID
 				info(true) << "updateImageDesign - Stats Migrated.";
