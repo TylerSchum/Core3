@@ -3,8 +3,8 @@ local ObjectManager = require("managers.object.object_manager")
 
 jediManagerName = "HologrindJediManager"
 
-NUMBEROFPROFESSIONSTOMASTER = 6
-MAXIMUMNUMBEROFPROFESSIONSTOSHOWWITHHOLOCRON = NUMBEROFPROFESSIONSTOMASTER - 2
+NUMBEROFPROFESSIONSTOMASTER = 12
+MAXIMUMNUMBEROFPROFESSIONSTOSHOWWITHHOLOCRON = NUMBEROFPROFESSIONSTOMASTER
 
 HologrindJediManager = JediManager:new {
 	screenplayName = jediManagerName,
@@ -42,7 +42,7 @@ function HologrindJediManager:getGrindableProfessionList()
 		{ "social_imagedesigner_master", 	SOCIAL_IMAGEDESIGNER_MASTER  },
 		{ "combat_marksman_master", 		COMBAT_MARKSMAN_MASTER  },
 		{ "science_medic_master", 		SCIENCE_MEDIC_MASTER  },
-		{ "crafting_merchant_master", 		CRAFTING_MERCHANT_MASTER  },
+		-- { "crafting_merchant_master", 		CRAFTING_MERCHANT_MASTER  },
 		{ "social_musician_master", 		SOCIAL_MUSICIAN_MASTER  },
 		{ "combat_polearm_master", 		COMBAT_POLEARM_MASTER  },
 		{ "combat_pistol_master", 		COMBAT_PISTOL_MASTER  },
@@ -140,15 +140,16 @@ function HologrindJediManager:awardJediStatusAndSkill(pCreatureObject)
 	end
 
 	awardSkill(pCreatureObject, "force_title_jedi_novice")
-	PlayerObject(pGhost):setJediState(1)
+	PlayerObject(pGhost):setJediState(2)
 end
 
 -- Check if the player has mastered all hologrind professions and send sui window and award skills.
 -- @param pCreatureObject pointer to the creature object of the player to check the jedi progression on.
 function HologrindJediManager:checkIfProgressedToJedi(pCreatureObject)
-	if self:getNumberOfMasteredProfessions(pCreatureObject) >= NUMBEROFPROFESSIONSTOMASTER and not self:isJedi(pCreatureObject) then
+	if self:getNumberOfMasteredProfessions(pCreatureObject) >= NUMBEROFPROFESSIONSTOMASTER and not CreatureObject(pCreatureObject):hasSkill("force_title_jedi_rank_02") then
 		self:sendSuiWindow(pCreatureObject)
 		self:awardJediStatusAndSkill(pCreatureObject)
+		CreatureObject(pCreatureObject):playEffect("clienteffect/trap_electric_01.cef", "")
 	end
 end
 
@@ -229,6 +230,11 @@ end
 -- @param pCreatureObject pointer to the creature object that used the item.
 function HologrindJediManager:useItem(pSceneObject, itemType, pCreatureObject)
 	if (pCreatureObject == nil or pSceneObject == nil) then
+		return
+	end
+
+	if CreatureObject(pCreatureObject):hasSkill("force_title_jedi_rank_02") then
+		VillageJediManagerHolocron.useHolocron(pSceneObject, pCreatureObject)
 		return
 	end
 

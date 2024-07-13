@@ -163,6 +163,7 @@ void AiAgentImplementation::loadTemplateData(SharedObjectTemplate* templateData)
 }
 
 void AiAgentImplementation::loadTemplateData(CreatureTemplate* templateData) {
+
 	npcTemplate = templateData;
 
 	setPvpStatusBitmask(npcTemplate->getPvpBitmask());
@@ -1346,7 +1347,8 @@ void AiAgentImplementation::setLevel(int lvl, bool randomHam) {
 				ham = System::random(baseHamMax - baseHam) + baseHam;
 			else
 				ham = ((baseHamMax - baseHam) / 2) + baseHam;
-
+			if (ham > 100000)
+				ham = 100000;
 			setBaseHAM(i, ham);
 		} else
 			setBaseHAM(i, ham / 100);
