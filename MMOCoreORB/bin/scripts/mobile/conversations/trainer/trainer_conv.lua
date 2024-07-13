@@ -148,3 +148,4 @@ createTrainerConversationTemplate("weaponsmithTrainerConvoTemplate", "trainer_we
 
 createTrainerConversationTemplate("fsTrainerConvoTemplate", "trainer_fs")
 createTrainerConversationTemplate("jediTrainerConvoTemplate", "trainer_jedi")
+createTrainerConversationTemplate("generalStoreTrainerConvoTemplate", "trainer_general_store")

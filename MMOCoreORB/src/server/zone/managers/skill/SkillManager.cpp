@@ -270,9 +270,6 @@ bool SkillManager::awardSkill(const String& skillName, CreatureObject* creature,
 	ManagedReference<PlayerObject*> ghost = creature->getPlayerObject();
 
 	if (ghost != nullptr) {
-		//Withdraw skill points.
-		ghost->addSkillPoints(-skill->getSkillPointsRequired());
-
 		//Witdraw experience.
 		if (!noXpRequired) {
 			TransactionLog trxExperience(TrxCode::EXPERIENCE, creature);
@@ -585,8 +582,6 @@ void SkillManager::surrenderAllSkills(CreatureObject* creature, bool notifyClien
 			}
 
 			if (ghost != nullptr) {
-				//Give the player the used skill points back.
-				ghost->addSkillPoints(skill->getSkillPointsRequired());
 
 				//Remove abilities
 				auto abilityNames = skill->getAbilities();
