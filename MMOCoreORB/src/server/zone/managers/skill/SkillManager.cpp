@@ -634,6 +634,7 @@ void SkillManager::awardDraftSchematics(Skill* skill, PlayerObject* ghost, bool 
 }
 
 void SkillManager::updateXpLimits(PlayerObject* ghost) {
+	return;
 	if (ghost == nullptr || !ghost->isPlayerObject()) {
 		return;
 	}
@@ -678,7 +679,7 @@ void SkillManager::updateXpLimits(PlayerObject* ghost) {
 		String xpType = experienceList->getKeyAt(i);
 		if (experienceList->get(xpType) > xpTypeCapList->get(xpType)) {
 			TransactionLog trx(TrxCode::EXPERIENCE, player);
-			ghost->addExperience(trx, xpType, xpTypeCapList->get(xpType) - experienceList->get(xpType), true);
+			ghost->addExperience(trx, xpType, xpTypeCapList->get(1000000), true);
 		}
 	}
 }

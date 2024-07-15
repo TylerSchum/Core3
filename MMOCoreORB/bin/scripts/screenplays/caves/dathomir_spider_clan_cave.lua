@@ -130,15 +130,10 @@ function SpiderClanCaveScreenPlay:spawnMobiles()
 	spawnMobile("dathomir", "reclusive_cavern_spider", 900, -35.5, -80.4, -139.8, 129, 3695711)
 	spawnMobile("dathomir", "reclusive_cavern_spider", 900, -27.3, -77.9, -132.0, 172, 3695711)
 	spawnMobile("dathomir", "reclusive_cavern_spider", 900, -17.3, -77.4, -132.3, -144, 3695711)
+	spawnMobile("dathomir", "kiin_dray", 600, -87.7, -100.8, -103.4, 174, 3695712)
 end
 
 function SpiderClanCaveScreenPlay:notifyQueenDead(pQueen, pKiller)
-	if (readData("spiderclancave:kiindray") == 0) then
-		local pKiinDray = spawnMobile("dathomir", "kiin_dray", 0, -87.7, -100.8, -103.4, 174, 3695712)
-		createObserver(OBJECTDESTRUCTION, "SpiderClanCaveScreenPlay", "notifyKiinDrayDead", pKiinDray)
-		writeData("spiderclancave:kiindray", 1)
-	end
-
 	return 0
 end
 

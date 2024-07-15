@@ -83,9 +83,12 @@ public:
 
 	int getFrsModifiedForceCost(CreatureObject* creature) const {
 		ManagedReference<PlayerObject*> ghost = creature->getPlayerObject();
-
+		int modifiableForceCost = forceCost;
+		if (modifiableForceCost > 100) {
+			modifiableForceCost = 100;
+		}
 		if (ghost == nullptr)
-			return forceCost;
+			return modifiableForceCost;
 
 		Locker locker(creature);
 
@@ -106,9 +109,9 @@ public:
 		}
 
 		if (manipulationMod == 0 || frsModifier == 0)
-			return forceCost;
+			return modifiableForceCost;
 
-		return forceCost + (int)((manipulationMod * frsModifier) + .5);
+		return modifiableForceCost + (int)((manipulationMod * frsModifier) + .5);
 	}
 
 	float getCommandDuration(CreatureObject *object, const UnicodeString& arguments) const {

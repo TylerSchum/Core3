@@ -218,6 +218,8 @@ public:
 			buffModifier = frsDarkBuffModifier;
 		}
 
+		buffModifier += 25;
+
 		if (controlModifier == 0 || buffModifier == 0)
 			return amount;
 
@@ -249,6 +251,8 @@ public:
 			frsModifier = frsDarkForceCostModifier;
 		}
 
+		manipulationMod += 25;
+
 		if (manipulationMod == 0 || frsModifier == 0)
 			return forceCost;
 
@@ -278,6 +282,8 @@ public:
 			manipulationMod = creature->getSkillMod("force_manipulation_dark");
 			frsModifier = frsDarkExtraForceCostModifier;
 		}
+
+		manipulationMod += 25;
 
 		if (manipulationMod == 0 || frsModifier == 0)
 			return val;

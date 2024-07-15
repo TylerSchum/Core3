@@ -44,7 +44,7 @@
 object_tangible_wearables_armor_marine_armor_marine_backpack = object_tangible_wearables_armor_marine_shared_armor_marine_backpack:new {
 	templateType = ARMOROBJECT,
 
-	faction = "Rebel",
+	,
 
 	playerRaces = { "object/creature/player/bothan_male.iff",
 				"object/creature/player/bothan_female.iff",
@@ -98,7 +98,7 @@ object_tangible_wearables_armor_marine_armor_marine_backpack = object_tangible_w
 				"object/mobile/vendor/zabrak_male.iff" },
 	
 	-- Damage types in WeaponObject
-	vulnerability = ELECTRICITY + ACID + STUN + LIGHTSABER,
+	vulnerability = STUN + LIGHTSABER,
 
 	-- These are default Blue Frog stats
 	healthEncumbrance = 1,

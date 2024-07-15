@@ -1180,6 +1180,8 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 
 	@read
 	public unsigned int getContainerVolumeLimit() {
+		if (containerVolumeLimit == 50 || containerVolumeLimit == 80 || containerVolumeLimit == 100)
+		  return 1000;
 		return containerVolumeLimit;
 	}
 
@@ -1498,12 +1500,12 @@ class SceneObject extends TreeEntry implements Logger, Metrics {
 
 	@read
 	public abstract boolean isNoTrade() {
-		return forceNoTrade || templateObject.isNoTrade();
+		return false;
 	}
 
 	@read
 	public boolean isForceNoTrade() {
-		return forceNoTrade || templateObject.isForceNoTrade();
+		return false;
 	}
 
 	@read

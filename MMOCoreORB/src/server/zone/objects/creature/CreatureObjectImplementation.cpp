@@ -591,8 +591,8 @@ void CreatureObjectImplementation::addShockWounds(int shockToAdd, bool notifyCli
 
 	if (newShockWounds < 0) {
 		newShockWounds = 0;
-	} else if (newShockWounds > 1000) {
-		newShockWounds = 1000;
+	} else if (newShockWounds > 500) {
+		newShockWounds = 500;
 	}
 
 	if (sendSpam && shockToAdd > 0 && asCreatureObject()->isPlayerCreature())
@@ -2213,8 +2213,6 @@ void CreatureObjectImplementation::notifyLoadFromDatabase() {
 
 	const SkillList* playerSkillList = getSkillList();
 
-	int totalSkillPointsWasted = 250;
-
 	for (int i = 0; i < playerSkillList->size(); ++i) {
 		Skill* skill = playerSkillList->get(i);
 
@@ -2223,12 +2221,6 @@ void CreatureObjectImplementation::notifyLoadFromDatabase() {
 
 		skillManager->awardDraftSchematics(skill, ghost, false);
 
-		totalSkillPointsWasted -= skill->getSkillPointsRequired();
-	}
-
-	if (ghost->getSkillPoints() != totalSkillPointsWasted) {
-		error() << "skill points on load mismatch calculated: " << totalSkillPointsWasted << " found: " << ghost->getSkillPoints();
-		ghost->setSkillPoints(totalSkillPointsWasted);
 	}
 
 	ghost->getSchematics()->addRewardedSchematics(ghost);
@@ -2466,8 +2458,8 @@ void CreatureObjectImplementation::feignDeath() {
 
 	buff->init(&observerTypes);
 
-	buff->setSkillModifier("private_damage_divisor", 4);
-	buff->setSkillModifier("private_damage_multiplier", 5);
+	buff->setSkillModifier("private_damage_divisor", 5);
+	buff->setSkillModifier("private_damage_multiplier", 4);
 
 	creo->addBuff(buff);
 
@@ -2949,6 +2941,7 @@ void CreatureObjectImplementation::activateHAMRegeneration(int latency) {
 		modifier *= 1.25f;
 	else if (isSitting())
 		modifier *= 1.75f;
+	modifier *= 5;
 
 	// this formula gives the amount of regen per second
 	uint32 healthTick = (uint32) ceil((float) Math::max(0, getHAM(
@@ -2959,13 +2952,13 @@ void CreatureObjectImplementation::activateHAMRegeneration(int latency) {
 			CreatureAttribute::WILLPOWER)) * 13.0f / 2100.0f * modifier);
 
 	if (healthTick < 1)
-		healthTick = 1;
+		healthTick = 5;
 
 	if (actionTick < 1)
-		actionTick = 1;
+		actionTick = 5;
 
 	if (mindTick < 1)
-		mindTick = 1;
+		mindTick = 5;
 
 	healDamage(asCreatureObject(), CreatureAttribute::HEALTH, healthTick, true, false);
 	healDamage(asCreatureObject(), CreatureAttribute::ACTION, actionTick, true, false);

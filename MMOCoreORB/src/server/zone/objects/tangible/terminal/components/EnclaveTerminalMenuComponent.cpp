@@ -10,88 +10,89 @@
 #include "server/zone/objects/player/variables/FrsData.h"
 
 void EnclaveTerminalMenuComponent::fillObjectMenuResponse(SceneObject* sceneObject, ObjectMenuResponse* menuResponse, CreatureObject* player) const {
-	ManagedReference<BuildingObject*> building = sceneObject->getParentRecursively(SceneObjectType::BUILDING).castTo<BuildingObject*>();
+	return;
+// 	ManagedReference<BuildingObject*> building = sceneObject->getParentRecursively(SceneObjectType::BUILDING).castTo<BuildingObject*>();
 
-	if (building == nullptr || player->isDead() || player->isIncapacitated())
-		return;
+// 	if (building == nullptr || player->isDead() || player->isIncapacitated())
+// 		return;
 
-	ZoneServer* zServ = building->getZoneServer();
+// 	ZoneServer* zServ = building->getZoneServer();
 
-	if (zServ == nullptr)
-		return;
+// 	if (zServ == nullptr)
+// 		return;
 
-	FrsManager* frsManager = zServ->getFrsManager();
+// 	FrsManager* frsManager = zServ->getFrsManager();
 
-	if (frsManager == nullptr)
-		return;
+// 	if (frsManager == nullptr)
+// 		return;
 
-	int enclaveType = frsManager->getEnclaveType(building);
+// 	int enclaveType = frsManager->getEnclaveType(building);
 
-	if (enclaveType == 0)
-		return;
+// 	if (enclaveType == 0)
+// 		return;
 
-	int terminalType = getTerminalType(sceneObject);
+// 	int terminalType = getTerminalType(sceneObject);
 
-	if (terminalType == 0)
-		return;
+// 	if (terminalType == 0)
+// 		return;
 
-	PlayerObject* ghost = player->getPlayerObject();
+// 	PlayerObject* ghost = player->getPlayerObject();
 
-	if (ghost == nullptr)
-		return;
+// 	if (ghost == nullptr)
+// 		return;
 
-	FrsData* frsData = ghost->getFrsData();
-	int playerRank = frsData->getRank();
+// 	FrsData* frsData = ghost->getFrsData();
+// 	int playerRank = frsData->getRank();
 
-	if (playerRank < 0 && !ghost->isPrivileged()) {
-		player->sendSystemMessage("@force_rank:insufficient_rank_vote"); // You have insufficient rank in order to vote.
-		return;
-	}
+// 	if (playerRank < 0 && !ghost->isPrivileged()) {
+// 		player->sendSystemMessage("@force_rank:insufficient_rank_vote"); // You have insufficient rank in order to vote.
+// 		return;
+// 	}
 
-	if (frsData->getCouncilType() == 0 && !ghost->isPrivileged())
-		return;
+// 	if (frsData->getCouncilType() == 0 && !ghost->isPrivileged())
+// 		return;
 
-	if (frsManager->isPlayerFightingInArena(player->getObjectID()))
-		return;
+// 	if (frsManager->isPlayerFightingInArena(player->getObjectID()))
+// 		return;
 
-	if (terminalType == VOTING) {
-		menuResponse->addRadialMenuItem(69, 3, "@force_rank:vote_status"); // Voting Status
-		menuResponse->addRadialMenuItemToRadialID(69, 70, 3,"@force_rank:record_vote"); // Record Vote
-		menuResponse->addRadialMenuItemToRadialID(69, 71, 3,"@force_rank:accept_promotion"); // Accept Promotion
-		menuResponse->addRadialMenuItemToRadialID(69, 73, 3,"@force_rank:petition"); // Petition
+// 	if (terminalType == VOTING) {
+// 		menuResponse->addRadialMenuItem(69, 3, "@force_rank:vote_status"); // Voting Status
+// 		menuResponse->addRadialMenuItemToRadialID(69, 70, 3,"@force_rank:record_vote"); // Record Vote
+// 		menuResponse->addRadialMenuItemToRadialID(69, 71, 3,"@force_rank:accept_promotion"); // Accept Promotion
+// 		menuResponse->addRadialMenuItemToRadialID(69, 73, 3,"@force_rank:petition"); // Petition
 
-		if (playerRank > 7 && enclaveType == FrsManager::COUNCIL_LIGHT)
-			menuResponse->addRadialMenuItem(75, 3, "@force_rank:demote_member"); // Demote Lower Tier Member
+// 		if (playerRank > 7 && enclaveType == FrsManager::COUNCIL_LIGHT)
+// 			menuResponse->addRadialMenuItem(75, 3, "@force_rank:demote_member"); // Demote Lower Tier Member
 
-		menuResponse->addRadialMenuItem(74, 3, "@force_rank:recover_jedi_items"); // Recover Jedi Items
-#if FRS_TESTING
-		if (ghost->isPrivileged())
-			menuResponse->addRadialMenuItem(76, 3, "Force Phase Change");
-#endif
-	} else if (terminalType == LIGHT_CHALLENGE) {
-		menuResponse->addRadialMenuItem(69, 3, "@force_rank:challenge_vote_status"); // No-Confidence Vote Status
+// 		menuResponse->addRadialMenuItem(74, 3, "@force_rank:recover_jedi_items"); // Recover Jedi Items
+// #if FRS_TESTING
+// 		if (ghost->isPrivileged())
+// 			menuResponse->addRadialMenuItem(76, 3, "Force Phase Change");
+// #endif
+// 	} else if (terminalType == LIGHT_CHALLENGE) {
+// 		menuResponse->addRadialMenuItem(69, 3, "@force_rank:challenge_vote_status"); // No-Confidence Vote Status
 
-		if (playerRank > 0) {
-			menuResponse->addRadialMenuItemToRadialID(69, 70, 3,"@force_rank:record_challenge_vote"); // Record No-Confidence Vote
-			menuResponse->addRadialMenuItemToRadialID(69, 71, 3,"@force_rank:issue_challenge_vote"); // Issue No-Confidence Vote
-		}
-	} else if (terminalType == DARK_CHALLENGE) {
-		menuResponse->addRadialMenuItem(69, 3, "@pvp_rating:ch_terminal_view_scores"); // View Challenge Scores
-		menuResponse->addRadialMenuItem(70, 3, "@pvp_rating:ch_terminal_arena_status"); // Arena Status
+// 		if (playerRank > 0) {
+// 			menuResponse->addRadialMenuItemToRadialID(69, 70, 3,"@force_rank:record_challenge_vote"); // Record No-Confidence Vote
+// 			menuResponse->addRadialMenuItemToRadialID(69, 71, 3,"@force_rank:issue_challenge_vote"); // Issue No-Confidence Vote
+// 		}
+// 	} else if (terminalType == DARK_CHALLENGE) {
+// 		menuResponse->addRadialMenuItem(69, 3, "@pvp_rating:ch_terminal_view_scores"); // View Challenge Scores
+// 		menuResponse->addRadialMenuItem(70, 3, "@pvp_rating:ch_terminal_arena_status"); // Arena Status
 
-		if (frsManager->rankHasOpenChallenges(-1))
-			menuResponse->addRadialMenuItem(71, 3, "@pvp_rating:ch_terminal_view_challenges"); // View Issued Challenges
+// 		if (frsManager->rankHasOpenChallenges(-1))
+// 			menuResponse->addRadialMenuItem(71, 3, "@pvp_rating:ch_terminal_view_challenges"); // View Issued Challenges
 
-		if (frsManager->canPlayerIssueArenaChallenge(player))
-			menuResponse->addRadialMenuItem(73, 3,"@pvp_rating:ch_terminal_issue_challenge"); // Issue Challenge
+// 		if (frsManager->canPlayerIssueArenaChallenge(player))
+// 			menuResponse->addRadialMenuItem(73, 3,"@pvp_rating:ch_terminal_issue_challenge"); // Issue Challenge
 
-		if (frsManager->canPlayerAcceptArenaChallenge(player))
-			menuResponse->addRadialMenuItem(72, 3, "@pvp_rating:ch_terminal_accept_challenge"); // Accept a Challenge
-#if FRS_TESTING
-		if (ghost->isPrivileged() && !frsManager->isArenaOpen())
-			menuResponse->addRadialMenuItem(76, 3, "(TESTING) Open Arena");
-#endif
-	}
+// 		if (frsManager->canPlayerAcceptArenaChallenge(player))
+// 			menuResponse->addRadialMenuItem(72, 3, "@pvp_rating:ch_terminal_accept_challenge"); // Accept a Challenge
+// #if FRS_TESTING
+// 		if (ghost->isPrivileged() && !frsManager->isArenaOpen())
+// 			menuResponse->addRadialMenuItem(76, 3, "(TESTING) Open Arena");
+// #endif
+// 	}
 }
 
 int EnclaveTerminalMenuComponent::handleObjectMenuSelect(SceneObject* sceneObject, CreatureObject* player, byte selectedID) const {

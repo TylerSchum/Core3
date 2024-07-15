@@ -14,24 +14,18 @@ void SharedStructureObjectTemplate::readObject(LuaObject* templateData) {
 
 	lotSize = templateData->getByteField("lotSize");
 
+	if (lotSize < 1)
+		lotSize = 1;
+
 	baseMaintenanceRate = templateData->getIntField("baseMaintenanceRate");
 
 	basePowerRate = templateData->getIntField("basePowerRate");
 
-	LuaObject allowzones = templateData->getObjectField("allowedZones");
-	allowedZones.removeAll(); //Make sure it's empty...
-
-	for (int i = 1; i <= allowzones.getTableSize(); ++i) {
-		allowedZones.put(allowzones.getStringAt(i));
-	}
-
-	allowzones.pop();
-
-	cityRankRequired = templateData->getByteField("cityRankRequired");
+	allowedZones = {"corellia", "talus", "dathomir", "endor", "lok", "naboo", "rori", "tatooine", "yavin4", "dantooine"};
 
 	constructionMarkerTemplate = templateData->getStringField("constructionMarker");
 
-	abilityRequired = templateData->getStringField("abilityRequired");
+	abilityRequired = "";
 
 	uniqueStructure = templateData->getBooleanField("uniqueStructure");
 

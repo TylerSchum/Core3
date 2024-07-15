@@ -47,7 +47,7 @@ levelChance = 100
 baseChance = 100
 yellowChance = 1000
 exceptionalChance = 100000
-legendaryChance = 1000000
+legendaryChance = 5
 
 --Multiplier values for bonus modifiers
 baseModifier = 1

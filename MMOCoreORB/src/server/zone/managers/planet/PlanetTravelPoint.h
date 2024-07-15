@@ -30,7 +30,7 @@ public:
 	PlanetTravelPoint(const String& zoneName) {
 		pointZone = zoneName;
 		arrivalVector.set(0.f, 0.f, 0.f);
-		interplanetaryTravelAllowed = false;
+		interplanetaryTravelAllowed = true;
 		incomingTravelAllowed = true;
 		shuttleObject = nullptr;
 		landingRange = 6.f;
@@ -41,7 +41,7 @@ public:
 		pointName = cityName;
 		arrivalVector = arrVector;
 		departureVector = departVector;
-		interplanetaryTravelAllowed = false;
+		interplanetaryTravelAllowed = true;
 		incomingTravelAllowed = true;
 		shuttleObject = shuttle;
 		landingRange = range;

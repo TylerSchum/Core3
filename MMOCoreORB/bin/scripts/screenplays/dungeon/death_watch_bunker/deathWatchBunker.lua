@@ -134,7 +134,7 @@ DeathWatchBunkerScreenPlay = ScreenPlay:new {
 
 	spawnEvents = { "", "spawnNextA", "spawnNextB", "spawnNextC" },
 
-	containerRespawnTime = 20 * 60 * 1000, -- 20 minutes
+	containerRespawnTime = 5 * 60 * 1000, -- 5 minutes
 	debrisRespawnTime = 10 * 60 * 1000, -- 10 minutes
 
 	primaryArmorColors = { 48, 55, 60, 95, 111, 127, 135, 143 },

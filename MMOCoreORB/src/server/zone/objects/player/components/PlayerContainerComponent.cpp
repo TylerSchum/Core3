@@ -38,21 +38,21 @@ int PlayerContainerComponent::canAddObject(SceneObject* sceneObject, SceneObject
 			}
 		}
 
-		if (creo->isPlayerCreature()) {
-			if (!wearable->isNeutral()) {
-				if (wearable->isImperial() && (creo->getFactionStatus() == FactionStatus::ONLEAVE || !creo->isImperial())) {
-					errorDescription = "You lack the necessary requirements to wear this object";
+		// if (creo->isPlayerCreature()) {
+		// 	if (!wearable->isNeutral()) {
+		// 		if (wearable->isImperial() && (creo->getFactionStatus() == FactionStatus::ONLEAVE || !creo->isImperial())) {
+		// 			errorDescription = "You lack the necessary requirements to wear this object";
 
-					return TransferErrorCode::PLAYERUSEMASKERROR;
-				}
+		// 			return TransferErrorCode::PLAYERUSEMASKERROR;
+		// 		}
 
-				if (wearable->isRebel() && (creo->getFactionStatus() == FactionStatus::ONLEAVE || !creo->isRebel())) {
-					errorDescription = "You lack the necessary requirements to wear this object";
+		// 		if (wearable->isRebel() && (creo->getFactionStatus() == FactionStatus::ONLEAVE || !creo->isRebel())) {
+		// 			errorDescription = "You lack the necessary requirements to wear this object";
 
-					return TransferErrorCode::PLAYERUSEMASKERROR;
-				}
-			}
-		}
+		// 			return TransferErrorCode::PLAYERUSEMASKERROR;
+		// 		}
+		// 	}
+		// }
 
 		if (object->isArmorObject()) {
 			PlayerManager* playerManager = sceneObject->getZoneServer()->getPlayerManager();
@@ -97,11 +97,6 @@ int PlayerContainerComponent::canAddObject(SceneObject* sceneObject, SceneObject
 			if (weapon->isJediWeapon()) {
 				if (bladeColor == 31) {
 					errorDescription = "@jedi_spam:lightsaber_no_color";
-					return TransferErrorCode::PLAYERUSEMASKERROR;
-				}
-
-				if (weapon->getCraftersID() != creo->getObjectID() && !ghost->isPrivileged()) {
-					errorDescription = "@jedi_spam:not_your_lightsaber";
 					return TransferErrorCode::PLAYERUSEMASKERROR;
 				}
 			}

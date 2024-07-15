@@ -28,7 +28,7 @@ public:
 	void deactivateWoundTreatment(CreatureObject* creature) const {
 		float modSkill = (float)creature->getSkillMod("healing_wound_speed");
 
-		int delay = (int)round((modSkill * -(2.0f / 25.0f)) + 20.0f);
+		int delay = (int)round((modSkill * -(2.0f / 25.0f)) + 20.0f) / 2;
 
 		if (creature->hasBuff(BuffCRC::FOOD_HEAL_RECOVERY)) {
 			DelayedBuff* buff = cast<DelayedBuff*>(creature->getBuff(BuffCRC::FOOD_HEAL_RECOVERY));
@@ -384,15 +384,6 @@ public:
 		// Applies battle fatigue
 		uint32 buffPower = getEnhancePackStrength(enhancePack, enhancer, patient);
 
-		if (buffPower < currentBuff) {
-			if (patient == enhancer)
-				enhancer->sendSystemMessage("Your current enhancements are of greater power and cannot be re-applied.");
-			else
-				enhancer->sendSystemMessage("Your target's current enhancements are of greater power and cannot be re-applied.");
-
-			return GENERALERROR;
-		}
-
 		auto zoneServer = server->getZoneServer();
 
 		if (zoneServer == nullptr)
@@ -420,8 +411,7 @@ public:
 			enhancePack->decreaseUseCount();
 		}
 
-		if (patient->getObjectID() != enhancer->getObjectID())
-			awardXp(enhancer, "medical", amountEnhanced); // No experience for healing yourself.
+		awardXp(enhancer, "medical", amountEnhanced); // No experience for healing yourself.
 
 		doAnimations(enhancer, patient);
 

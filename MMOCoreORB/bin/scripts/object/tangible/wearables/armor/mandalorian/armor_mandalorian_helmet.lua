@@ -44,11 +44,6 @@
 object_tangible_wearables_armor_mandalorian_armor_mandalorian_helmet = object_tangible_wearables_armor_mandalorian_shared_armor_mandalorian_helmet:new {
 	templateType = ARMOROBJECT,
 
-	certificationsRequired = { "combat_bountyhunter_master",
-					"combat_commando_master",
-					"outdoors_squadleader_master",
-					"outdoors_ranger_master" },
-
 	playerRaces = { "object/creature/player/bothan_male.iff",
 				"object/creature/player/bothan_female.iff",
 				"object/creature/player/human_male.iff",
@@ -96,18 +91,18 @@ object_tangible_wearables_armor_mandalorian_armor_mandalorian_helmet = object_ta
 	mindEncumbrance = 286,
 
 	-- LIGHT, MEDIUM, HEAVY
-	rating = LIGHT,
-	maxCondition = 40000,
+	rating = LIGHT,	
+	maxCondition = 400000,
 
-	kinetic = 58,
-	energy = 58,
-	electricity = 0,
-	stun = 0,
-	blast = 65,
-	heat = 58,
-	cold = 0,
-	acid = 58,
-	lightSaber = 0
+	kinetic = 90,
+	energy = 90,
+	electricity = 90,
+	stun = 90,
+	blast = 90,
+	heat = 90,
+	cold = 90,
+	acid = 90,
+	lightSaber = 90
 }
 
 ObjectTemplates:addTemplate(object_tangible_wearables_armor_mandalorian_armor_mandalorian_helmet, "object/tangible/wearables/armor/mandalorian/armor_mandalorian_helmet.iff")

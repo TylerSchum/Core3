@@ -32,106 +32,107 @@ public:
 	}
 
 	void run() {
-		ManagedReference<SceneObject* > sceno = recycler->getParentRecursively(SceneObjectType::PLAYERCREATURE);
-		if (!sceno->isPlayerCreature() || sceno == nullptr) {
-			return;
-		} else {
-			player = cast <CreatureObject*>(sceno.get());
-		}
+		return;
+	// 	ManagedReference<SceneObject* > sceno = recycler->getParentRecursively(SceneObjectType::PLAYERCREATURE);
+	// 	if (!sceno->isPlayerCreature() || sceno == nullptr) {
+	// 		return;
+	// 	} else {
+	// 		player = cast <CreatureObject*>(sceno.get());
+	// 	}
 
-		Locker locker(player);
+	// 	Locker locker(player);
 
-		inventory = player->getSlottedObject("inventory");
+	// 	inventory = player->getSlottedObject("inventory");
 
-		if (inventory == nullptr) {
-			return;
-		}
+	// 	if (inventory == nullptr) {
+	// 		return;
+	// 	}
 
-		if (!insertedItem->isResourceContainer()) {
-			player->sendSystemMessage("@recycler_messages:no_resource"); // This processor can only recycle resources.
-			removeFromRecycler("wrong resource");
-			return;
-		}
+	// 	if (!insertedItem->isResourceContainer()) {
+	// 		player->sendSystemMessage("@recycler_messages:no_resource"); // This processor can only recycle resources.
+	// 		removeFromRecycler("wrong resource");
+	// 		return;
+	// 	}
 
-		ResourceContainer* resCon = cast<ResourceContainer*>(insertedItem.get());
+	// 	ResourceContainer* resCon = cast<ResourceContainer*>(insertedItem.get());
 
-		if(resCon == nullptr) {
-			removeFromRecycler("resource container nullptr");
-			return;
-		}
+	// 	if(resCon == nullptr) {
+	// 		removeFromRecycler("resource container nullptr");
+	// 		return;
+	// 	}
 
-		resource = resCon->getSpawnObject();
+	// 	resource = resCon->getSpawnObject();
 
-		if(resource == nullptr) {
-			removeFromRecycler("spawn object nullptr");
-			return;
-		}
+	// 	if(resource == nullptr) {
+	// 		removeFromRecycler("spawn object nullptr");
+	// 		return;
+	// 	}
 
-		ResourceManager* manager = player->getZoneServer()->getResourceManager();
+	// 	ResourceManager* manager = player->getZoneServer()->getResourceManager();
 
-		if(manager == nullptr) {
-			removeFromRecycler("failed to get resourceManager");
-			return;
-		}
+	// 	if(manager == nullptr) {
+	// 		removeFromRecycler("failed to get resourceManager");
+	// 		return;
+	// 	}
 
-		int recyclerSelectedType = recycler->getSelectedResource();
+	// 	int recyclerSelectedType = recycler->getSelectedResource();
 
-		if (recyclerSelectedType == RecycleTool::NOTYPE) {
-			player->sendSystemMessage("@ui:res_noresourceselected"); // No Resource Selected
-			removeFromRecycler("no resource selected");
-			return;
-		}
+	// 	if (recyclerSelectedType == RecycleTool::NOTYPE) {
+	// 		player->sendSystemMessage("@ui:res_noresourceselected"); // No Resource Selected
+	// 		removeFromRecycler("no resource selected");
+	// 		return;
+	// 	}
 
-		String selectedTypeName = recycler->getSelectedTypeName();
+	// 	String selectedTypeName = recycler->getSelectedTypeName();
 
-		resourceRecycleType = manager->getResourceRecycleType(resource);
+	// 	resourceRecycleType = manager->getResourceRecycleType(resource);
 
-		if (manager->isRecycledResource(resource)) {
-			player->sendSystemMessage("@recycler_messages:already_recycled"); // You can not recycle a recycled resource.
-			removeFromRecycler("already recycled");
-			return;
-		}
+	// 	if (manager->isRecycledResource(resource)) {
+	// 		player->sendSystemMessage("@recycler_messages:already_recycled"); // You can not recycle a recycled resource.
+	// 		removeFromRecycler("already recycled");
+	// 		return;
+	// 	}
 
 
-		if (resourceRecycleType == RecycleTool::NOTYPE) {
-			player->sendSystemMessage("@recycler_messages:no_type"); // That resource can not be recycled as it does not have a processed form.
-			removeFromRecycler("invalid resource");
-			return;
-		}
+	// 	if (resourceRecycleType == RecycleTool::NOTYPE) {
+	// 		player->sendSystemMessage("@recycler_messages:no_type"); // That resource can not be recycled as it does not have a processed form.
+	// 		removeFromRecycler("invalid resource");
+	// 		return;
+	// 	}
 
-		if(resourceRecycleType != recyclerSelectedType) {
-			removeFromRecycler("mismatched resource type");
-			String stub = "@recycler_messages:only_";
-			if (recycler->getToolType() == RecycleTool::METAL) {
-				stub = stub + "metal_";
-			} else if (recycler->getToolType() == RecycleTool::ORE && selectedTypeName != "gemstone") {
-				stub = stub + "ore_";
-			}
-			player->sendSystemMessage(stub + selectedTypeName); // This processor is set to recycle [resourceType] resources. You may need another type of processor for the resource you're trying to use, or you may try a different setting.
-			return;
-		}
+	// 	if(resourceRecycleType != recyclerSelectedType) {
+	// 		removeFromRecycler("mismatched resource type");
+	// 		String stub = "@recycler_messages:only_";
+	// 		if (recycler->getToolType() == RecycleTool::METAL) {
+	// 			stub = stub + "metal_";
+	// 		} else if (recycler->getToolType() == RecycleTool::ORE && selectedTypeName != "gemstone") {
+	// 			stub = stub + "ore_";
+	// 		}
+	// 		player->sendSystemMessage(stub + selectedTypeName); // This processor is set to recycle [resourceType] resources. You may need another type of processor for the resource you're trying to use, or you may try a different setting.
+	// 		return;
+	// 	}
 
-		ResourceSpawn* recycledVersion = manager->getRecycledVersion(resource);
+	// 	ResourceSpawn* recycledVersion = manager->getRecycledVersion(resource);
 
-		TransactionLog trx(TrxCode::RECYCLED, player);
-		if (!manager->harvestResourceToPlayer(trx, player, recycledVersion, resCon->getQuantity())) {
-			trx.abort() << "Recycle error: harvestResourceToPlayer failed.";
-			return;
-		}
+	// 	TransactionLog trx(TrxCode::RECYCLED, player);
+	// 	if (!manager->harvestResourceToPlayer(trx, player, recycledVersion, resCon->getQuantity())) {
+	// 		trx.abort() << "Recycle error: harvestResourceToPlayer failed.";
+	// 		return;
+	// 	}
 
-		Locker clocker(insertedItem, player);
+	// 	Locker clocker(insertedItem, player);
 
-		insertedItem->destroyObjectFromWorld(true);
-		insertedItem->destroyObjectFromDatabase(true);
+	// 	insertedItem->destroyObjectFromWorld(true);
+	// 	insertedItem->destroyObjectFromDatabase(true);
 
-		trx.commit(true);
-	}
+	// 	trx.commit(true);
+	// }
 
-	void removeFromRecycler(const String& reason) {
-		TransactionLog trx(recycler, player, insertedItem, TrxCode::TRANSFERITEMMISC);
-		trx.addState("reason", "removeFromRecycler: " + reason);
-		TransferItemMiscCommand::doTransferItemMisc(player, insertedItem, inventory, -1, trx);
-	}
+	// void removeFromRecycler(const String& reason) {
+	// 	TransactionLog trx(recycler, player, insertedItem, TrxCode::TRANSFERITEMMISC);
+	// 	trx.addState("reason", "removeFromRecycler: " + reason);
+	// 	TransferItemMiscCommand::doTransferItemMisc(player, insertedItem, inventory, -1, trx);
+	// }
 };
 
 #endif /* RECYCLERESOURCETASK_H_ */

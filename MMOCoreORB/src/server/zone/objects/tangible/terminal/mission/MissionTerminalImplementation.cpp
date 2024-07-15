@@ -99,13 +99,13 @@ int MissionTerminalImplementation::handleObjectMenuSelect(CreatureObject* player
 	}
 
 	if (selectedID >= 78) {
-		int selectedLevel = 0;//server->getPlayerManager()->calculatePlayerLevel(player);
+		int selectedLevel = 0;
 
 		if (selectedID == 78) selectedLevel = 5;
 		if (selectedID == 79) selectedLevel = 10;
 		if (selectedID == 80) selectedLevel = 15;
 		if (selectedID == 81) selectedLevel = 25;
-		if (selectedID == 82) selectedLevel = 0;//server->getPlayerManager()->calculatePlayerLevel(player);
+		if (selectedID == 82) selectedLevel = 0;
 		if (selectedID == 83) selectedLevel = 35;
 		if (selectedID == 84) selectedLevel = 50;
 		if (selectedID == 85) selectedLevel = 75;

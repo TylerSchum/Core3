@@ -64,7 +64,9 @@ function VillageJediManagerCommon.isVillageEligible(pPlayer)
 		return false
 	end
 
-	return VillageJediManagerCommon.hasJediProgressionScreenPlayState(pPlayer, VILLAGE_JEDI_PROGRESSION_HAS_VILLAGE_ACCESS) and QuestManager.hasCompletedQuest(pPlayer, QuestManager.quests.FS_VILLAGE_ELDER)
+	return true
+
+	-- return VillageJediManagerCommon.hasJediProgressionScreenPlayState(pPlayer, VILLAGE_JEDI_PROGRESSION_HAS_VILLAGE_ACCESS) and QuestManager.hasCompletedQuest(pPlayer, QuestManager.quests.FS_VILLAGE_ELDER)
 end
 
 -- Check if the player has the jedi progression screen play state.
@@ -100,8 +102,8 @@ function VillageJediManagerCommon.hasUnlockedBranch(pPlayer, branch)
 	if (pPlayer == nil) then
 		return false
 	end
-
-	return CreatureObject(pPlayer):hasScreenPlayState(2, "VillageUnlockScreenPlay:" .. branch)
+	return true
+	-- return CreatureObject(pPlayer):hasScreenPlayState(2, "VillageUnlockScreenPlay:" .. branch)
 end
 
 function VillageJediManagerCommon.getUnlockedBranchCount(pPlayer)
@@ -251,7 +253,7 @@ function VillageJediManagerCommon.getLearnedForceSensitiveBranches(pPlayer)
 	local branchesLearned = 0
 
 	for i = 1, #VillageJediManagerCommon.forceSensitiveBranches, 1 do
-		if (CreatureObject(pPlayer):hasSkill(VillageJediManagerCommon.forceSensitiveBranches[i] .. "_04")) then
+		if (CreatureObject(pPlayer):hasSkill(VillageJediManagerCommon.forceSensitiveBranches[i])) then
 			branchesLearned = branchesLearned + 1
 		end
 	end

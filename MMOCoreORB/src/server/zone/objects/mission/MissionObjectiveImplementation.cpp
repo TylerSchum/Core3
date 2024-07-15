@@ -327,6 +327,7 @@ void MissionObjectiveImplementation::awardReward() {
 
 	StringIdChatParameter stringId("mission/mission_generic", "success_w_amount");
 	stringId.setDI(dividedReward);
+	owner->sendSystemMessage(stringId);
 	if (anonymousPlayerBounties && bonusCreds > 0) {
 		String bonusString = "The Bounty Hunter guild has paid you a bonus in the amount of: " + String::valueOf(bonusCreds);
 		owner->sendSystemMessage(bonusString);

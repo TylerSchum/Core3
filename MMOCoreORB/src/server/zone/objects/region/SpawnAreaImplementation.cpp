@@ -37,9 +37,6 @@ void SpawnAreaImplementation::notifyPositionUpdate(TreeEntry* entry) {
 	if (zoneServer != nullptr && (zoneServer->isServerLoading() || zoneServer->isServerShuttingDown()))
 		return;
 
-	if (lastSpawn.miliDifference() < ConfigManager::instance()->getMinLairSpawnInterval())
-		return;
-
 #ifdef DEBUG_SPAWNING
 	info(true) << getAreaName() << " --SpawnAreaImplementation::notifyPositionUpdate called";
 #endif // DEBUG_SPAWNING
@@ -118,7 +115,7 @@ Vector3 SpawnAreaImplementation::getRandomPosition(SceneObject* player) {
 
 	const auto worldPosition = player->getWorldPosition();
 
-	position = areaShape->getRandomPosition(worldPosition, 32.0f, ZoneServer::CLOSEOBJECTRANGE);
+	position = areaShape->getRandomPosition(worldPosition, 128.0f, 192.0f);
 
 	return position;
 }
@@ -159,14 +156,14 @@ int SpawnAreaImplementation::notifyObserverEvent(unsigned int eventType, Observa
 
 			Locker locker(area);
 
-			area->setRadius(ConfigManager::instance()->getSpawnCheckRange());
+			area->setRadius(64);
 			area->addAreaFlag(ActiveArea::NOSPAWNAREA);
 			area->initializePosition(sceneO->getPositionX(), sceneO->getPositionZ(), sceneO->getPositionY());
 
 			thisZone->transferObject(area, -1, true);
 
 			Reference<Task*> task = new RemoveNoSpawnAreaTask(area);
-			task->schedule(30000);
+			task->schedule(15000);
 		}
 	}
 
@@ -242,7 +239,7 @@ void SpawnAreaImplementation::tryToSpawn(CreatureObject* player) {
 		return;
 	}
 
-	float checkRange = finalSpawn->getSize() + ConfigManager::instance()->getSpawnCheckRange();
+	float checkRange = finalSpawn->getSize() + 64;
 
 	// Check the spot to see if spawning is allowed
 	if (!planetManager->isSpawningPermittedAt(randomPosition.getX(), randomPosition.getY(), checkRange, isWorldSpawnArea())) {

@@ -304,7 +304,7 @@ void LightsaberCrystalComponentImplementation::fillAttributeList(AttributeListMe
 				alm->insertAttribute("wpn_attack_cost_health", sacHealth);
 				alm->insertAttribute("wpn_attack_cost_action", sacAction);
 				alm->insertAttribute("wpn_attack_cost_mind", sacMind);
-				alm->insertAttribute("forcecost", (int)getForceCost());
+				alm->insertAttribute("forcecost", (float)getForceCost());
 
 				// For debugging
 				if (player->isPrivileged()) {
@@ -453,7 +453,15 @@ void LightsaberCrystalComponentImplementation::updateCraftingValues(CraftingValu
 	int color = values->getCurrentValue("color");
 
 	if (colorMax != 31) {
-		int finalColor = Math::min(color, 11);
+		int finalColor = System::random(6);// red,green,blue
+
+		if (System::random(9) >= 9){
+		finalColor = System::random(6) + 6;// 1/10 color crystals will be yellow,purp,orange
+		}
+
+		if (System::random(99) >= 99){
+		finalColor = System::random(18) + 12;// 1/100 color crystals will be special named colors
+		}
 		setColor(finalColor);
 		updateCrystal(finalColor);
 	} else {

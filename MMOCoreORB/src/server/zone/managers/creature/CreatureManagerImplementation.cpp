@@ -135,7 +135,7 @@ SceneObject* CreatureManagerImplementation::spawnLair(unsigned int lairTemplate,
 			break;
 	}
 
-	uint32 conditionCalc = Math::min((float)CreatureManager::CREATURE_LAIR_MAX, (System::random(baseCondition) + ((baseCondition / 10) * difficultyLevel)));
+	uint32 conditionCalc = difficultyLevel * (900 + System::random(200)) / 2;
 
 	building->setMaxCondition(conditionCalc);
 	building->setConditionDamage(0, false);
@@ -831,9 +831,6 @@ void CreatureManagerImplementation::droidHarvest(Creature* creature, CreatureObj
 		quantityExtracted = (int)(quantityExtracted * modifier);
 	}
 
-	if (creature->getParent().get() != nullptr)
-		quantityExtracted = 1;
-
 	int droidBonus = DroidMechanics::determineDroidSkillBonus(ownerSkill,harvestBonus,quantityExtracted);
 
 	quantityExtracted += droidBonus;
@@ -917,7 +914,7 @@ void CreatureManagerImplementation::harvest(Creature* creature, CreatureObject* 
 	if (!creature->canHarvestMe(player))
 		return;
 
-	if (!player->isInRange(creature, 7))
+	if (!player->isInRange(creature, 32))
 		return;
 
 	ManagedReference<ResourceManager*> resourceManager = zone->getZoneServer()->getResourceManager();
@@ -1001,9 +998,6 @@ void CreatureManagerImplementation::harvest(Creature* creature, CreatureObject* 
 
 		quantityExtracted = (int)(quantityExtracted * modifier);
 	}
-
-	if (creature->getParent().get() != nullptr)
-		quantityExtracted = 1;
 
 	TransactionLog trx(TrxCode::HARVESTED, player, resourceSpawn);
 	resourceManager->harvestResourceToPlayer(trx, player, resourceSpawn, quantityExtracted);

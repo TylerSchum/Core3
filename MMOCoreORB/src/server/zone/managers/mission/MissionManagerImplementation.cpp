@@ -722,7 +722,7 @@ void MissionManagerImplementation::randomizeFactionTerminalMissions(CreatureObje
 		}
 
 		if (slicer) {
-			mission->setRewardCredits(mission->getRewardCredits() * 1.5);
+			mission->setRewardCredits(mission->getRewardCredits() * 2);
 		}
 
 		float cityBonus = 1.f + player->getSkillMod("private_spec_missions") / 100.f;
@@ -775,7 +775,7 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 		diffDisplay += playerLevel;
 	}
 	ManagedReference<PlayerObject* > ghost = player->getPlayerObject();
-	int levelSelect = ghost->getExperience("mission_level_choice")
+	int levelSelect = ghost->getExperience("mission_level_choice");
 
 	if (levelSelect > 0) {
 		diffDisplay = levelSelect;
@@ -984,7 +984,7 @@ void MissionManagerImplementation::randomizeGenericSurveyMission(CreatureObject*
 }
 
 void MissionManagerImplementation::randomizeGenericBountyMission(CreatureObject* player, MissionObject* mission, const uint32 faction, Vector<ManagedReference<PlayerBounty*>>* potentialTargets) {
-	if (!player->hasSkill("combat_bountyhunter_novice" && !player->hasSkill("force_title_jedi_rank_03"))) {
+	if (!player->hasSkill("combat_bountyhunter_novice") && !player->hasSkill("force_title_jedi_rank_03")) {
 		player->sendSystemMessage("@mission/mission_generic:not_bounty_hunter_terminal");
 		return;
 	}
@@ -2022,10 +2022,7 @@ bool MissionManagerImplementation::isBountyValidForPlayer(CreatureObject* player
 		return false;
 
 	int maxBountiesPerJedi = ConfigManager::instance()->getInt("Core3.MissionManager.MaxBountiesPerJedi", 5);
-
-	if (bounty->numberOfActiveMissions() >= maxBountiesPerJedi)
-		return false;
-
+	
 	uint64 targetId = bounty->getTargetPlayerID();
 	uint64 playerId = player->getObjectID();
 
@@ -2267,10 +2264,7 @@ int MissionManagerImplementation::getRealBountyReward(CreatureObject* creo, Play
 }
 
 String MissionManagerImplementation::getRandomBountyPlanet() {
-	// get player object
-	ManagedReference<SceneObject*> player = server->getObject("player");
-	// get player current planet
-	return player->getContainer()->getZone()->getPlanetManager()->getPlanetName();
+	return "corellia";
 }
 
 bool MissionManagerImplementation::sendPlayerBountyDebug(CreatureObject* creature, CreatureObject* target) {

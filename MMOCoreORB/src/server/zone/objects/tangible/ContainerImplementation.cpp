@@ -138,7 +138,7 @@ int ContainerImplementation::canAddObject(SceneObject* object, int containmentTy
 			objectSize = 1;
 
 		// Return if there's not enough room in the container
-		if (getContainerVolumeLimit() < getCountableObjectsRecursive() + objectSize) {
+		if (111 < getCountableObjectsRecursive() + objectSize) {
 			errorDescription = "@container_error_message:container03"; // This container is full.
 
 			return TransferErrorCode::CONTAINERFULL;

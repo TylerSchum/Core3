@@ -125,10 +125,7 @@ int CraftingSessionImplementation::startSession() {
 	}
 
 	/// Get current allowed complexity
-	int complexityLevel = craftingTool->getComplexityLevel();
-
-	if (craftingStation != nullptr)
-		complexityLevel = craftingStation->getComplexityLevel();
+	int complexityLevel = 100000;
 
 	/// Get filtered schematic list based on tool type and complexity
 	currentSchematicList.removeAll();
@@ -137,7 +134,7 @@ int CraftingSessionImplementation::startSession() {
 
 	/// DPlay9 ***********************************
 	PlayerObjectDeltaMessage9* dplay9 = new PlayerObjectDeltaMessage9(crafterGhost);
-	dplay9->setExperimentationEnabled(craftingStation != nullptr);
+	dplay9->setExperimentationEnabled(true);
 	dplay9->setCraftingState(1);
 
 	if (craftingStation != nullptr)
@@ -831,13 +828,7 @@ void CraftingSessionImplementation::initialAssembly(int clientCounter) {
 		prototype->sendTo(crafter, true);
 	}
 
-	// Flag to get the experimenting window
-	if (craftingStation != nullptr && (craftingValues->getTotalVisibleAttributeGroups() > 0 || manufactureSchematic->allowFactoryRun()))
-		// Assemble with Experimenting
-		state = 3;
-	else
-		// Assemble without Experimenting
-		state = 4;
+	state = 3;
 
 	// info(true) << "State = " << state << " Total Experimentation Points = " << experimentationPointsTotal;
 
@@ -861,6 +852,10 @@ void CraftingSessionImplementation::initialAssembly(int clientCounter) {
 
 	// Update the prototype with new values
 	prototype->updateCraftingValues(craftingValues, true);
+
+	prototype->setJunkDealerNeeded(1);
+
+	prototype->setJunkValue(manufactureSchematic->getComplexity() * manufactureSchematic->getComplexity())
 
 	addSkillMods();
 
@@ -1382,16 +1377,16 @@ void CraftingSessionImplementation::createPrototype(int clientCounter, bool crea
 		int xp = manufactureSchematic->getDraftSchematic()->getXpAmount();
 
 		if (createItem) {
-			startCreationTasks(manufactureSchematic->getComplexity() * 2, false);
+			startCreationTasks(0, false);
 
 		} else {
 			// This is for practicing
-			startCreationTasks(manufactureSchematic->getComplexity() * 2, true);
+			startCreationTasks(0, true);
 			xp = round(xp * 1.5f);
 		}
 
 		Reference<PlayerManager*> playerManager = crafter->getZoneServer()->getPlayerManager();
-		playerManager->awardExperience(crafter, xpType, xp, true);
+		playerManager->awardExperience(crafter, xpType, xp * 2, true);
 
 		manufactureSchematic->setCompleted();
 

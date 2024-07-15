@@ -113,10 +113,12 @@ void WearableObjectImplementation::applyAttachment(CreatureObject* player, Attac
 	if (!isASubChildOf(player))
 		return;
 
-	if (getRemainingSockets() > 0 && wearableSkillMods.size() < 6) {
+	if (getRemainingSockets() > 0 && wearableSkillMods.size() < 12) {
 		Locker locker(player);
 
 		if (isEquipped()) {
+			player->sendSystemMessage("*** You can not add a Skill Enhancing Attachment to an item while it is equipped ***");
+			return;
 			removeSkillModsFrom(player);
 		}
 

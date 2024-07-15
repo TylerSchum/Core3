@@ -1,5 +1,5 @@
 JediTrials = ScreenPlay:new {
-	padawanTrialsEnabled = true,
+	padawanTrialsEnabled = false,
 	knightTrialsEnabled = true,
 
 	-- Object ID's of the various force shrines.
@@ -27,9 +27,7 @@ function JediTrials:isEligibleForPadawanTrials(pPlayer)
 		return false
 	end
 
-	local learnedBranches = VillageJediManagerCommon.getLearnedForceSensitiveBranches(pPlayer)
-
-	return CreatureObject(pPlayer):hasScreenPlayState(32, "VillageJediProgression") and not CreatureObject(pPlayer):hasSkill("force_title_jedi_rank_02") and learnedBranches >= 6 and tonumber(readScreenPlayData(pPlayer, "PadawanTrials", "completedTrials")) ~= 1
+	return CreatureObject(pPlayer):hasSkill("force_title_jedi_novice") and not CreatureObject(pPlayer):hasSkill("force_title_jedi_rank_02") and tonumber(readScreenPlayData(pPlayer, "PadawanTrials", "completedTrials")) ~= 1
 end
 
 function JediTrials:isOnPadawanTrials(pPlayer)
@@ -191,8 +189,6 @@ function JediTrials:unlockJediKnight(pPlayer)
 	PlayerObject(pGhost):setJediState(jediState)
 	PlayerObject(pGhost):setFrsCouncil(councilType)
 	PlayerObject(pGhost):setFrsRank(0)
-	CreatureObject(pPlayer):setFactionStatus(2) -- Overt
-	CreatureObject(pPlayer):setFaction(setFactionVal)
 
 	local sui = SuiMessageBox.new("JediTrials", "emptyCallback") -- No callback
 	sui.setTitle("@jedi_trials:knight_trials_title")

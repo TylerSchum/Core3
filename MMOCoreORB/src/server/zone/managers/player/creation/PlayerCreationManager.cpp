@@ -498,13 +498,6 @@ bool PlayerCreationManager::createCharacter(ClientCreateCharacterCallback* callb
 
 							Time timeVal(sec);
 
-							if (timeVal.miliDifference() < 3600000) {
-								ErrorMessage* errMsg = new ErrorMessage("Create Error", "You are only permitted to create one character per hour. Repeat attempts prior to 1 hour elapsing will reset the timer.", 0x0);
-								client->sendMessage(errMsg);
-
-								playerCreature->destroyPlayerCreatureFromDatabase(true);
-								return false;
-							}
 						}
 					} catch (const DatabaseException& e) {
 						error(e.getMessage());
@@ -512,20 +505,9 @@ bool PlayerCreationManager::createCharacter(ClientCreateCharacterCallback* callb
 
 					Locker locker(&charCountMutex);
 
-					if (lastCreatedCharacter.containsKey(accID)) {
-						Time lastCreatedTime = lastCreatedCharacter.get(accID);
+					lastCreatedTime.updateToCurrentTime();
 
-						if (lastCreatedTime.miliDifference() < 3600000) {
-							ErrorMessage* errMsg = new ErrorMessage("Create Error", "You are only permitted to create one character per hour. Repeat attempts prior to 1 hour elapsing will reset the timer.", 0x0);
-							client->sendMessage(errMsg);
-
-							playerCreature->destroyPlayerCreatureFromDatabase(true);
-							return false;
-						} else {
-							lastCreatedTime.updateToCurrentTime();
-
-							lastCreatedCharacter.put(accID, lastCreatedTime);
-						}
+					lastCreatedCharacter.put(accID, lastCreatedTime);
 					} else {
 						lastCreatedCharacter.put(accID, Time());
 					}
@@ -593,7 +575,7 @@ bool PlayerCreationManager::createCharacter(ClientCreateCharacterCallback* callb
 
 	ManagedReference<SuiMessageBox*> box = new SuiMessageBox(playerCreature, SuiWindowType::NONE);
 	box->setPromptTitle("PLEASE NOTE");
-	box->setPromptText("You are limited to creating one character per hour. Attempting to create another character or deleting your character before the 1 hour timer expires will reset the timer.");
+	box->setPromptText("Welcome to the server! Please remember to read the rules and have fun! Stats can be migrated in the tutorial zone or in Image Designer tents.");
 
 	ghost->addSuiBox(box);
 	playerCreature->sendMessage(box->generateMessage());

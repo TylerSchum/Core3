@@ -69,7 +69,7 @@ public:
 
 			int forceDrain = 0;
 
-			if (targetCreature.isPlayerCreature()) {
+			if (targetCreature->isPlayerCreature()) {
 				int targetForce = targetGhost->getForcePower();
 				if (playerGhost->getForcePower() < forceCost) {
 					creature->sendSystemMessage("@jedi_spam:no_force_power"); //You do not have sufficient Force power to perform that action.
@@ -79,7 +79,7 @@ public:
 				int forceDrain = targetForce >= drain ? drain : targetForce; //Drain whatever Force the target has, up to max.
 				targetGhost->setForcePower(targetGhost->getForcePower() - forceDrain);
 			} else {
-				int minDrain = (maxDamage * 4) / 2
+				int minDrain = (maxDamage * 4) / 2;
 				int maxDrain = maxDamage * 4;
 				int drain = minDrain + System::random(maxDrain - minDrain + 1);
 				forceDrain = drain;

@@ -300,8 +300,7 @@ public:
 
 			sendHealMessage(creature, targetCreature, healthHealed, actionHealed, mindHealed);
 
-			if (targetCreature != creature && !targetCreature->isPet())
-				awardXp(creature, "medical", (healthHealed + actionHealed)); //No experience for healing yourself or pets.
+			awardXp(creature, "medical", (healthHealed + actionHealed));
 
 			checkForTef(creature, targetCreature);
 		}
@@ -493,8 +492,7 @@ public:
 		Locker locker(stimPack);
 		stimPack->decreaseUseCount();
 
-		if (targetCreature != creature && !targetCreature->isPet())
-			awardXp(creature, "medical", (healthHealed + actionHealed)); //No experience for healing yourself.
+		awardXp(creature, "medical", (healthHealed + actionHealed));
 
 		if (targetCreature != creature)
 			clocker.release();

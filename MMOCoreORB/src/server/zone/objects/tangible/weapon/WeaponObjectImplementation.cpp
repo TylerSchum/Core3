@@ -29,13 +29,6 @@ void WeaponObjectImplementation::initializeTransientMembers() {
 
 	setLoggingName("WeaponObject");
 
-	if(damageSlice > 1.5 || damageSlice < 1) {
-		damageSlice = 1;
-	}
-
-	if(speedSlice > 1.0 || speedSlice < .5) {
-		speedSlice = 1;
-	}
 }
 
 void WeaponObjectImplementation::notifyLoadFromDatabase() {
@@ -92,11 +85,7 @@ void WeaponObjectImplementation::loadTemplateData(SharedObjectTemplate* template
 	if (templateAttackSpeed > 1)
 		attackSpeed = templateAttackSpeed;
 
-	if (!isJediWeapon()) {
-		setSliceable(true);
-	} else if (isJediWeapon()) {
-		setSliceable(false);
-	}
+	setSliceable(true);
 }
 
 void WeaponObjectImplementation::sendContainerTo(CreatureObject* player) {
@@ -712,14 +701,10 @@ String WeaponObjectImplementation::repairAttempt(int repairChance) {
 	String message = "@error_message:";
 
 	if(repairChance < 25) {
-		message += "sys_repair_failed";
-		setMaxCondition(1, true);
-		setConditionDamage(0, true);
-	} else if(repairChance < 50) {
 		message += "sys_repair_imperfect";
 		setMaxCondition(getMaxCondition() * .65f, true);
 		setConditionDamage(0, true);
-	} else if(repairChance < 75) {
+	} else if(repairChance < 50) {
 		setMaxCondition(getMaxCondition() * .80f, true);
 		setConditionDamage(0, true);
 		message += "sys_repair_slight";
@@ -747,19 +732,8 @@ void WeaponObjectImplementation::decay(CreatureObject* user) {
 		Locker locker(_this.getReferenceUnsafeStaticCast());
 
 		if (isJediWeapon()) {
-			ManagedReference<SceneObject*> saberInv = getSlottedObject("saber_inv");
-
-			if (saberInv == nullptr)
-				return;
-
-			// TODO: is this supposed to be every crystal, or random crystal(s)?
-			for (int i = 0; i < saberInv->getContainerObjectsSize(); i++) {
-				ManagedReference<LightsaberCrystalComponent*> crystal = saberInv->getContainerObject(i).castTo<LightsaberCrystalComponent*>();
-
-				if (crystal != nullptr) {
-					crystal->inflictDamage(crystal, 0, 1, true, true);
-				}
-			}
+			// Jedi weapons are not destroyed by decay
+			return;
 		} else {
 			inflictDamage(_this.getReferenceUnsafeStaticCast(), 0, 1, true, true);
 

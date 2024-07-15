@@ -485,14 +485,7 @@ void FrsManagerImplementation::validatePlayerData(CreatureObject* player, bool v
 	verifyRoomAccess(player, realPlayerRank);
 
 	if (realPlayerRank >= 0 && (councilType == COUNCIL_LIGHT || councilType == COUNCIL_DARK)) {
-		if (councilType == COUNCIL_LIGHT && player->getFaction() != Factions::FACTIONREBEL)
-			player->setFaction(Factions::FACTIONREBEL);
-		else if (councilType == COUNCIL_DARK && player->getFaction() != Factions::FACTIONIMPERIAL)
-			player->setFaction(Factions::FACTIONIMPERIAL);
-
-		if (player->getFactionStatus() != FactionStatus::OVERT)
-			player->setFactionStatus(FactionStatus::OVERT);
-
+		
 		if (realPlayerRank >= 4 && !player->hasSkill("force_title_jedi_rank_04"))
 			player->addSkill("force_title_jedi_rank_04", true);
 		if (realPlayerRank >= 8 && !player->hasSkill("force_title_jedi_master"))
@@ -890,47 +883,6 @@ void FrsManagerImplementation::adjustFrsExperience(CreatureObject* player, int a
 			StringIdChatParameter param("@force_rank:experience_granted"); // You have gained %DI Force Rank experience.
 			param.setDI(amount);
 			player->sendSystemMessage(param);
-		}
-	} else {
-		FrsData* playerData = ghost->getFrsData();
-		int rank = playerData->getRank();
-		int councilType = playerData->getCouncilType();
-
-		int curExperience = ghost->getExperience("force_rank_xp");
-
-		// Ensure we dont go into the negatives
-		if ((amount * -1) > curExperience)
-			amount = curExperience * -1;
-
-		TransactionLog trx(TrxCode::EXPERIENCE, player);
-		ghost->addExperience(trx, "force_rank_xp", amount, true);
-
-		if (sendSystemMessage) {
-			StringIdChatParameter param("@force_rank:experience_lost"); // You have lost %DI Force Rank experience.
-			param.setDI(amount * -1);
-			player->sendSystemMessage(param);
-		}
-
-		curExperience += amount;
-
-		Reference<FrsRankingData*> rankingData = nullptr;
-
-		if (councilType == COUNCIL_LIGHT)
-			rankingData = lightRankingData.get(rank);
-		else if (councilType == COUNCIL_DARK)
-			rankingData = darkRankingData.get(rank);
-
-		if (rankingData == nullptr)
-			return;
-
-		int reqXp = rankingData->getRequiredExperience();
-
-		if (reqXp > curExperience) {
-			auto zoneServer = this->zoneServer.get();
-			ChatManager* chatManager = zoneServer->getChatManager();
-
-			chatManager->sendMail("Enclave Records", "@force_rank:demote_xp_debt_sub", "@force_rank:demote_xp_debt_body", player->getFirstName());
-			demotePlayer(player);
 		}
 	}
 }

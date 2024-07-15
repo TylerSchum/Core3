@@ -43,7 +43,7 @@ public:
 		int targetsCap = FactionManager::instance()->getFactionPointsCap(targetsRank);
 		int targetsCurrentPoints = targetPlayerObject->getFactionStanding(faction);
 
-		float ratio = (float) delegateRatioFrom / (float)delegateRatioTo;
+		float ratio = 1;
 
 		uint32 charge = ceil((float)tipAmount * ratio);
 

@@ -570,14 +570,10 @@ class WeaponObject extends TangibleObject {
 	public native void decay(CreatureObject user);
 
 	public void setDamageSlice(float value) {
-		if(value > 0.5f || value < 0)
-			return;
 		damageSlice = 1 + value;
 	}
 
 	public void setSpeedSlice(float value) {
-		if(value > 0.5f || value < 0)
-			return;
 		speedSlice = 1 - value;
 	}
 

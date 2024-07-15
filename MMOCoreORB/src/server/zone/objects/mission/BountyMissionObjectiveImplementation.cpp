@@ -125,6 +125,12 @@ void BountyMissionObjectiveImplementation::complete() {
 
 	ManagedReference<CreatureObject*> owner = getPlayerOwner();
 	//Award bountyhunter xp.
+	if (owner->hasSkill("combat_bountyhunter_novice")) {
+		owner->getZoneServer()->getPlayerManager()->awardExperience(owner, "bountyhunter", mission->getRewardCredits() / 50, true, 1);
+	}
+	if (owner->hasSkill("force_title_jedi_rank_03"))	{
+		owner->getZoneServer()->getPlayerManager()->awardExperience(owner, "force_rank_xp", mission->getDifficultyDisplay() * 10, true, 1, false);
+	}
 
 	int expGain = (mission->getRewardCredits() + mission->getBonusCredits()) / 50;
 
@@ -641,27 +647,7 @@ void BountyMissionObjectiveImplementation::handlePlayerKilled(ManagedObject* arg
 	if (target == nullptr)
 		return;
 
-	int minXpLoss = -50000;
-	int maxXpLoss = -500000;
-
 	VisibilityManager::instance()->clearVisibility(target);
-	int rewardCreds = mission->getRewardCredits() + mission->getBonusCredits();
-	int xpLoss = rewardCreds * -2;
-
-	if (xpLoss > minXpLoss)
-		xpLoss = minXpLoss;
-	else if (xpLoss < maxXpLoss)
-		xpLoss = maxXpLoss;
-
-	auto playerManager = zoneServer->getPlayerManager();
-
-	if (playerManager != nullptr)
-		playerManager->awardExperience(target, "jedi_general", xpLoss, true);
-
-	StringIdChatParameter message("base_player", "prose_revoke_xp");
-	message.setDI(xpLoss * -1);
-	message.setTO("exp_n", "jedi_general");
-	target->sendSystemMessage(message);
 
 	complete();
 }

@@ -150,10 +150,10 @@ void MissionObjectImplementation::setMissionDifficulty(int diffLevel, int displa
 }
 
 void MissionObjectImplementation::setRewardCredits(int creds, bool notifyClient) {
+	creds *= 2;
+
 	if (rewardCredits == creds)
 		return;
-
-	rewardCredits = creds * 2;
 
 	if (!notifyClient)
 		return;

@@ -124,6 +124,7 @@ public:
 	}
 
 	void splitCredits() {
+		return;
 		//Pre: Corpse is locked.
 		//Post: Corpse is locked.
 

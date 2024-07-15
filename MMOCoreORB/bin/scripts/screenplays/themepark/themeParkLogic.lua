@@ -1887,11 +1887,12 @@ function ThemeParkLogic:handleMissionReward(pConversingPlayer)
 	end
 
 	local rewards = mission.rewards
+	local bonusCredits = getRandomNumber(10000, 30000)
 
 	for i = 1, # rewards, 1 do
 		local reward = rewards[i]
 		if reward.rewardType == "credits" then
-			self:giveCredits(pConversingPlayer, reward.amount)
+			bonusCredits += reward.amount
 		elseif reward.rewardType == "faction" then
 			self:giveFaction(pConversingPlayer, reward.faction, reward.amount)
 		elseif reward.rewardType == "loot" then
@@ -1906,6 +1907,7 @@ function ThemeParkLogic:handleMissionReward(pConversingPlayer)
 			self:giveItemReward(pConversingPlayer, reward.itemTemplate)
 		end
 	end
+	self:giveCredits(pConversingPlayer, bonusCredits)
 end
 
 function ThemeParkLogic:givePermission(pConversingPlayer, permissionGroup)
@@ -1939,7 +1941,7 @@ function ThemeParkLogic:giveLoot(pConversingPlayer, lootGroup)
 		return
 	end
 
-	createLoot(pInventory, lootGroup, 0, true)
+	createLoot(pInventory, lootGroup, 350, true)
 	CreatureObject(pConversingPlayer):sendSystemMessage("@theme_park/messages:theme_park_reward")
 end
 
@@ -1954,7 +1956,7 @@ function ThemeParkLogic:giveLootSet(pConversingPlayer, lootGroup, setSize)
 		return
 	end
 
-	createLootSet(pInventory, lootGroup, 0, true, setSize)
+	createLootSet(pInventory, lootGroup, 350, true, setSize)
 	CreatureObject(pConversingPlayer):sendSystemMessage("@theme_park/messages:theme_park_reward")
 end
 
@@ -2178,7 +2180,7 @@ function ThemeParkLogic:escortedNpcCloseEnough(pConversingPlayer)
 	local objectID = readData(CreatureObject(pConversingPlayer):getObjectID() .. ":missionSpawn:no1")
 	local pNpc = getSceneObject(objectID)
 
-	return pNpc ~= nil and SceneObject(pConversingPlayer):getDistanceTo(pNpc) < 64
+	return pNpc ~= mil
 end
 
 function ThemeParkLogic:resetThemePark(pConversingPlayer)

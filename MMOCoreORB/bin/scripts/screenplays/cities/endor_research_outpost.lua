@@ -83,4 +83,5 @@ function EndorResearchOutpostScreenPlay:spawnMobiles()
 			CreatureObject(pNpc):clearOptionBit(AIENABLED)
 		end
 	end
+	spawnMobile("endor", "boba_fett", 60, -4683, 13, 4331, 156.98, 0)
 end

@@ -1048,13 +1048,7 @@ uint32 BuildingObjectImplementation::getMaximumNumberOfPlayerItems() {
 
 	uint8 lots = ssot->getLotSize();
 
-	//Buildings that don't cost lots have MAXPLAYERITEMS storage space.
-	if (lots == 0)
-		return MAXPLAYERITEMS;
-
-	auto maxItems = MAXPLAYERITEMS;
-
-	return Math::min(maxItems, lots * 100);
+	return 10000;
 }
 
 int BuildingObjectImplementation::notifyObjectInsertedToChild(SceneObject* object, SceneObject* child, SceneObject* oldParent) {

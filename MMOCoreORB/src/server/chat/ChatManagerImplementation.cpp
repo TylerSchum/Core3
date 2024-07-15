@@ -50,6 +50,7 @@
 #include "server/chat/room/ChatRoomMap.h"
 #include "templates/string/StringFile.h"
 #include "templates/faction/Factions.h"
+#include "server/zone/objects/player/sui/messagebox/SuiMessageBox.h"
 
 ChatManagerImplementation::ChatManagerImplementation(ZoneServer* serv, int initsize) : ManagedServiceImplementation() {
 	server = serv;
@@ -317,7 +318,7 @@ void ChatManagerImplementation::initiateRooms() {
 	generalRoom->setAllowSubrooms(true);
 	generalRoom->setTitle("public chat for this server, can create rooms here");
 
-	auctionRoom = createRoom("Auction", galaxyRoom);
+	auctionRoom = createRoom("Galaxy Chat", galaxyRoom);
 	auctionRoom->setCanEnter(true);
 	auctionRoom->setChatRoomType(ChatRoom::AUCTION);
 
@@ -975,8 +976,14 @@ void ChatManagerImplementation::broadcastGalaxy(const String& message, const Str
 	while (playerMap->hasNext(false)) {
 		ManagedReference<CreatureObject*> playerObject = playerMap->getNextValue(false);
 
-		if (playerObject->getFaction() == factionCRC || playerObject->getPlayerObject()->hasGodMode())
-			playerObject->sendSystemMessage(message);
+		ManagedReference<SuiMessageBox*> box = new SuiMessageBox(playerObject, SuiWindowType::NONE);
+		box->setPromptTitle("NOTICE!");
+		box->setPromptText(stringMessage);
+
+		PlayerObject* ghost = playerObject->getPlayerObject();
+
+		ghost->addSuiBox(box);
+		playerObject->sendMessage(box->generateMessage());
 	}
 }
 

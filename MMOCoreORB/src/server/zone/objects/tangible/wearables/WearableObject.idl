@@ -20,7 +20,7 @@ class WearableObject extends TangibleObject {
 
 	protected int modsNotInSockets;
 
-	public static final int MAXSOCKETS = 4;
+	public static final int MAXSOCKETS = 10;
 	public static final int MIN_SOCKET_MOD = 60;
 
 	@dereferenced
@@ -92,7 +92,7 @@ class WearableObject extends TangibleObject {
 	}
 
 	public abstract void addSkillMod(final int skillType, final string skillMod, int value, boolean notifyClient = true) {
-		if (wearableSkillMods.size() <= 6) {
+		if (wearableSkillMods.size() <= 12) {
 			wearableSkillMods.put(skillMod, value);
 			modsNotInSockets++;
 		}

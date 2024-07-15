@@ -5,9 +5,11 @@
  *      Author: TheAnswer
  */
 
+#include "server/zone/managers/jedi/JediManager.h"
 #include "server/zone/managers/player/PlayerManager.h"
 #include <utility>
 #include <mutex>
+#include "server/login/account/AccountManager.h"
 
 #include "server/zone/packets/charcreation/ClientCreateCharacterCallback.h"
 #include "server/zone/packets/charcreation/ClientCreateCharacterFailed.h"
@@ -110,6 +112,10 @@
 #include <sys/stat.h>
 #include "server/zone/objects/transaction/TransactionLog.h"
 #include "server/zone/objects/creature/commands/TransferItemMiscCommand.h"
+#include "server/zone/managers/visibility/VisibilityManager.h"
+#include "server/zone/objects/mission/MissionObjective.h"
+#include "server/zone/objects/mission/MissionObject.h"
+#include "server/zone/managers/mission/MissionManager.h"
 #include "templates/crcstringtable/CrcStringTable.h"
 #include "server/zone/objects/ship/PobShipObject.h"
 #include "server/zone/objects/tangible/deed/ship/ShipDeed.h"
@@ -1505,6 +1511,52 @@ void PlayerManagerImplementation::killPlayer(TangibleObject* attacker, CreatureO
 		}, "PvpDeathRatingUpdateLambda");
 	}
 
+	if (!attacker->isPlayerCreature()) {
+		SortedVector<ManagedReference<SceneObject*> > insurableItems = getInsurableItems(player, false);
+
+		// Decay
+		if (typeofdeath == 0 && insurableItems.size() > 0) {
+
+			ManagedReference<SuiListBox*> suiCloneDecayReport = new SuiListBox(player, SuiWindowType::CLONE_REQUEST_DECAY, SuiListBox::HANDLESINGLEBUTTON);
+			suiCloneDecayReport->setPromptTitle("DECAY REPORT");
+			suiCloneDecayReport->setPromptText("The following report summarizes the status of your items after the decay event.");
+			suiCloneDecayReport->addMenuItem("\\#00FF00DECAYED ITEMS");
+
+			for (int i = 0; i < insurableItems.size(); i++) {
+				SceneObject* item = insurableItems.get(i);
+
+				if (item != nullptr && item->isTangibleObject()) {
+					ManagedReference<TangibleObject*> obj = cast<TangibleObject*>(item);
+
+					Locker clocker(obj, player);
+
+					if (obj->getOptionsBitmask() & OptionBitmask::INSURED) {
+						//1% Decay for insured items
+						obj->inflictDamage(obj, 0, 0.01 * obj->getMaxCondition(), true, true);
+						//Set uninsured
+						uint32 bitmask = obj->getOptionsBitmask() - OptionBitmask::INSURED;
+						obj->setOptionsBitmask(bitmask);
+					} else {
+						//5% Decay for uninsured items
+						obj->inflictDamage(obj, 0, 0.05 * obj->getMaxCondition(), true, true);
+					}
+
+					// Calculate condition percentage for decay report
+					int max = obj->getMaxCondition();
+					int min = max - obj->getConditionDamage();
+					int condPercentage = ( min / (float)max ) * 100.0f;
+					String line = " - " + obj->getDisplayedName() + " (@"+String::valueOf(condPercentage)+"%)";
+
+					suiCloneDecayReport->addMenuItem(line, item->getObjectID());
+				}
+			}
+
+			ghost->addSuiBox(suiCloneDecayReport);
+			player->sendMessage(suiCloneDecayReport->generateMessage());
+
+		}
+	}
+
 	if (player->isGrouped()) {
 		ManagedReference<GroupObject*> group = player->getGroup();
 
@@ -1779,20 +1831,21 @@ void PlayerManagerImplementation::sendPlayerToCloner(CreatureObject* player, uin
 	uint64 preDesignatedFacilityOid = ghost->getCloningFacility();
 	ManagedReference<SceneObject*> preDesignatedFacility = server->getObject(preDesignatedFacilityOid);
 
+	int healthheal = player->getMaxHAM(CreatureAttribute::HEALTH);
+	int actionheal = player->getMaxHAM(CreatureAttribute::ACTION);
+	int mindheal = player->getMaxHAM(CreatureAttribute::MIND);
 	if (preDesignatedFacility == nullptr || preDesignatedFacility != cloner) {
-		player->addWounds(CreatureAttribute::HEALTH, 100, true, false);
-		player->addWounds(CreatureAttribute::ACTION, 100, true, false);
-		player->addWounds(CreatureAttribute::MIND, 100, true, false);
-		player->addShockWounds(100, true);
+		player->addWounds(CreatureAttribute::HEALTH, healthheal / 3, true, false);
+		player->addWounds(CreatureAttribute::ACTION, actionheal / 3, true, false);
+		player->addWounds(CreatureAttribute::MIND, mindheal / 3, true, false);
+		player->addShockWounds(500, true);
 	}
+	player->healDamage(player, CreatureAttribute::HEALTH, healthheal, true);
+	player->healDamage(player, CreatureAttribute::ACTION, actionheal, true);
+	player->healDamage(player, CreatureAttribute::MIND, mindheal, true);
 
-	if (ConfigManager::instance()->useCovertOvertSystem()) {
-		if ((player->getFactionStatus() == FactionStatus::OVERT) && !player->hasSkill("force_rank_light_novice") && !player->hasSkill("force_rank_dark_novice") && (cbot->getFacilityType() != CloningBuildingObjectTemplate::FACTION_IMPERIAL) && (cbot->getFacilityType() != CloningBuildingObjectTemplate::FACTION_REBEL))
-			player->setFactionStatus(FactionStatus::COVERT);
-	} else {
-		if (player->getFactionStatus() != FactionStatus::ONLEAVE && cbot->getFacilityType() != CloningBuildingObjectTemplate::FACTION_IMPERIAL && cbot->getFacilityType() != CloningBuildingObjectTemplate::FACTION_REBEL && !player->hasSkill("force_title_jedi_rank_03"))
-			player->setFactionStatus(FactionStatus::ONLEAVE);
-	}
+	if (player->getFactionStatus() != FactionStatus::ONLEAVE && cbot->getFacilityType() != CloningBuildingObjectTemplate::FACTION_IMPERIAL && cbot->getFacilityType() != CloningBuildingObjectTemplate::FACTION_REBEL && !player->hasSkill("force_title_jedi_rank_03"))
+		player->setFactionStatus(FactionStatus::ONLEAVE);
 
 	SortedVector<ManagedReference<SceneObject*> > insurableItems = getInsurableItems(player, false);
 
@@ -2116,9 +2169,9 @@ void PlayerManagerImplementation::disseminateExperience(TangibleObject* destruct
 				else
 					xpAmount *= 0.5f;
 
-				if (xpType == "dotDMG") { // Prevents XP generated from DoTs from applying to the equiped weapon, but still counts towards combat XP
-					continue;
-				}
+				// if (xpType == "dotDMG") { // Prevents XP generated from DoTs from applying to the equiped weapon, but still counts towards combat XP
+				// 	continue;
+				// }
 
 				//Award individual expType
 				awardExperience(attackerCreo, xpType, xpAmount);
@@ -2546,12 +2599,6 @@ void PlayerManagerImplementation::handleAddItemToTradeWindow(CreatureObject* pla
 		return;
 	}
 
-	if (objectToTrade->isNoTrade()) {
-		player->sendSystemMessage("@container_error_message:container26");
-		handleAbortTradeMessage(player);
-		return;
-	}
-
 	// Containers containing notrade items...
 	if (objectToTrade->containsNoTradeObjectRecursive()) {
 		player->sendSystemMessage("@container_error_message:container26");
@@ -2705,9 +2752,6 @@ bool PlayerManagerImplementation::checkTradeItems(CreatureObject* player, Creatu
 	for (int i = 0; i < tradeContainer->getTradeSize(); ++i) {
 		ManagedReference<SceneObject*> scene = tradeContainer->getTradeItem(i);
 
-		if (scene->isNoTrade())
-			return false;
-
 		if (scene->isTangibleObject()) {
 
 			String err;
@@ -2774,9 +2818,6 @@ bool PlayerManagerImplementation::checkTradeItems(CreatureObject* player, Creatu
 
 	for (int i = 0; i < receiverContainer->getTradeSize(); ++i) {
 		ManagedReference<SceneObject*> scene = receiverContainer->getTradeItem(i);
-
-		if (scene->isNoTrade())
-			return false;
 
 		if (scene->isTangibleObject()) {
 
@@ -3102,6 +3143,8 @@ int PlayerManagerImplementation::healEnhance(CreatureObject* enhancer, CreatureO
 			buffdiff -= value;
 		}
 	}
+
+	duration = 8 * 60 * 60;
 
 	// Twi'lek race receives a 10% duration bonus
 	if (patient->getSpeciesName() == "twilek") {
@@ -3780,6 +3823,7 @@ void PlayerManagerImplementation::updateSwimmingState(CreatureObject* player, fl
 }
 
 int PlayerManagerImplementation::checkSpeedHackFirstTest(CreatureObject* player, float parsedSpeed, ValidatedPosition& teleportPosition, float errorMultiplier) {
+	return 0;
 	float allowedSpeedMod = player->getSpeedMultiplierMod();
 	float allowedSpeedBase = player->getRunSpeed();
 
@@ -4058,9 +4102,9 @@ void PlayerManagerImplementation::addInsurableItemsRecursive(SceneObject* obj, S
 		if (item == nullptr || item->hasAntiDecayKit() || item->isJediRobe() || item->isUnionRing() || !item->isInsurable())
 			continue;
 
-		if (!(item->getOptionsBitmask() & OptionBitmask::INSURED) && (item->isArmorObject() || item->isWearableObject())) {
+		if (!(item->getOptionsBitmask() & OptionBitmask::INSURED) && (item->isArmorObject() || item->isWearableObject() || item->isWeaponObject())) {
 			items->put(item);
-		} else if ((item->getOptionsBitmask() & OptionBitmask::INSURED) && (item->isArmorObject() || item->isWearableObject()) && !onlyInsurable) {
+		} else if ((item->getOptionsBitmask() & OptionBitmask::INSURED) && (item->isArmorObject() || item->isWearableObject() || item->isWeaponObject()) && !onlyInsurable) {
 			items->put(item);
 		}
 
@@ -4092,9 +4136,9 @@ SortedVector<ManagedReference<SceneObject*> > PlayerManagerImplementation::getIn
 			if (item == nullptr || item->hasAntiDecayKit() || item->isJediRobe() || item->isUnionRing() || !item->isInsurable())
 				continue;
 
-			if (!(item->getOptionsBitmask() & OptionBitmask::INSURED) && (item->isArmorObject() || item->isWearableObject())) {
+			if (!(item->getOptionsBitmask() & OptionBitmask::INSURED) && (item->isArmorObject() || item->isWearableObject() || item->isWeaponObject())) {
 				insurableItems.put(item);
-			} else if ((item->getOptionsBitmask() & OptionBitmask::INSURED) && (item->isArmorObject() || item->isWearableObject()) && !onlyInsurable) {
+			} else if ((item->getOptionsBitmask() & OptionBitmask::INSURED) && (item->isArmorObject() || item->isWearableObject() || item->isWeaponObject()) && !onlyInsurable) {
 				insurableItems.put(item);
 			}
 		}
@@ -6202,6 +6246,7 @@ bool PlayerManagerImplementation::doEnhanceCharacter(uint32 crc, CreatureObject*
 	int selfStrengthFocus = player->getBaseHAM(CreatureAttribute::FOCUS) * 1.25;
 	int selfStrengthWill = player->getBaseHAM(CreatureAttribute::WILLPOWER) * 1.25;
 	int selfDuration = 480;
+	bool message = true;
 
 	message = message && doEnhanceCharacter(0x98321369, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 0);
 	message = message && doEnhanceCharacter(0x815D85C5, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 1); 

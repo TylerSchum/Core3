@@ -1062,6 +1062,8 @@ void PlayerObjectImplementation::doDigest(int fillingReduction) {
 	if (!isDigesting())
 		return;
 
+	fillingReduction *= 2;
+
 	// Make sure filling isn't over max before we reduce
 	if (foodFilling > foodFillingMax)
 		foodFilling = foodFillingMax;
@@ -2154,6 +2156,11 @@ void PlayerObjectImplementation::activateForcePowerRegen() {
 
 	if(regen == 0.0f)
 		return;
+
+	if (creature->isInCombat())//combat regen disabled
+		regen /= 5;
+	else
+		regen *= 20;//out of combat regen buff
 
 	if (forceRegenerationEvent == nullptr) {
 		forceRegenerationEvent = new ForceRegenerationEvent(asPlayerObject());

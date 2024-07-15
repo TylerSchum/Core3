@@ -46,7 +46,7 @@ ScreenPlay = Object:new {
 	lootContainers = {},
 	lootLevel = 0,
 	lootGroups = {},
-	lootContainerRespawn = 1800 -- 30 minutes
+	lootContainerRespawn = 300 -- 30 minutes
 }
 
 function ScreenPlay:initializeLootContainers()

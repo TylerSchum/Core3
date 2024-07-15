@@ -96,7 +96,7 @@ int CraftingManagerImplementation::calculateExperimentationSuccess(CreatureObjec
 	/// Range 0-100
 	int luckRoll = System::random(100) + cityBonus;
 
-	if(luckRoll > ((95 - expbonus) - forceSkill))
+	if(luckRoll > ((90 - expbonus) - forceSkill))
 		return AMAZINGSUCCESS;
 
 	if(luckRoll < (5 - expbonus - failMitigate))

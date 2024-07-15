@@ -352,7 +352,7 @@ void SurveySessionImplementation::surveyGnodeMinigame(int value) {
 		}
 
 		surveyer->inflictDamage(surveyer, CreatureAttribute::ACTION, 300, false, true);
-		doGamble = true;
+		doGamble = false;
 	}
 
 	rescheduleSample();
@@ -379,7 +379,7 @@ void SurveySessionImplementation::rescheduleSample() {
 		sampleTask = new SampleTask(surveyer, activeSurveyTool.get());
 
 	if (surveyer->getPendingTask("sample") == nullptr)
-		surveyer->addPendingTask("sample", sampleTask, 25000);
+		surveyer->addPendingTask("sample", sampleTask, 10000);
 }
 
 void SurveySessionImplementation::rescheduleSampleResults(const ResourceSpawner* resourceSpawner, float density, const String& resname) {

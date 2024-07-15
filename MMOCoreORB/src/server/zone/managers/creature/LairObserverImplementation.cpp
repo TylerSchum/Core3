@@ -271,9 +271,6 @@ bool LairObserverImplementation::checkForNewSpawns(TangibleObject* lair, Tangibl
 	VectorMap<String, int> objectsToSpawn; // String mobileTemplate, int number to spawn
 
 	if (spawnNumber == 4) {
-		if (System::random(100) > 9) {
-			return false;
-		}
 
 		const VectorMap<String, int>* mobs = lairTemplate->getBossMobiles();
 
@@ -288,7 +285,7 @@ bool LairObserverImplementation::checkForNewSpawns(TangibleObject* lair, Tangibl
 		if (getMobType() == LairTemplate::CREATURE) {
 			int difficultyLevel = getDifficultyLevel();
 
-			amountToSpawn = Math::min(difficultyLevel, lairTemplate->getSpawnLimit() / 2) + System::random(2);
+			amountToSpawn = System::random(3) + ((lairTemplate->getSpawnLimit() / 3) - 2);
 		} else {
 			amountToSpawn = System::random(lairTemplate->getSpawnLimit() / 2) + (lairTemplate->getSpawnLimit() / 2);
 		}
@@ -296,6 +293,8 @@ bool LairObserverImplementation::checkForNewSpawns(TangibleObject* lair, Tangibl
 		if (amountToSpawn < 1) {
 			amountToSpawn = 1;
 		}
+
+		amountToSpawn += System::random(amountToSpawn);
 
 		for (int i = 0; i < amountToSpawn; i++) {
 			int num = System::random(mobiles->size() - 1);

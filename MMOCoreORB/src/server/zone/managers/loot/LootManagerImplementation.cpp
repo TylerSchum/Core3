@@ -276,6 +276,8 @@ void LootManagerImplementation::setCustomObjectName(TangibleObject* object, cons
 }
 
 void LootManagerImplementation::setJunkValue(TangibleObject* prototype, const LootItemTemplate* itemTemplate, int level, float excMod) {
+	
+	prototype->setJunkDealerNeeded(1);
 	float valueMin = itemTemplate->getJunkMinValue() * junkValueModifier;
 	float valueMax = itemTemplate->getJunkMaxValue() * junkValueModifier;
 
@@ -302,7 +304,7 @@ int LootManagerImplementation::calculateLootCredits(int level) {
 
 	int credits = mincredits + System::random(maxcredits - mincredits);
 
-	return credits;
+	return credits * 2;
 }
 
 void LootManagerImplementation::setRandomLootValues(TransactionLog& trx, TangibleObject* prototype, const LootItemTemplate* itemTemplate, int level, float excMod) {
@@ -335,15 +337,57 @@ void LootManagerImplementation::setRandomLootValues(TransactionLog& trx, Tangibl
 
 		for (int i = 0; i < lootValues.getTotalExperimentalAttributes(); ++i) {
 			const String& attribute = lootValues.getAttribute(i);
+			float percentage = level / 350 * 80 +(System::random(350) / 350 * 20);
 
+			int max = lootValues.getMaxValue(attribute);
+			int min = lootValues.getMinValue(attribute);
 			JSONSerializationType attrDebugEntry;
 			attrDebugEntry["mod"] = lootValues.getMaxPercentage(attribute);
 			attrDebugEntry["pct"] = lootValues.getCurrentPercentage(attribute);
-			attrDebugEntry["min"] = lootValues.getMinValue(attribute);
-			attrDebugEntry["max"] = lootValues.getMaxValue(attribute);
 			attrDebugEntry["final"] = lootValues.getCurrentValue(attribute);
-			attrDebug[attribute] = attrDebugEntry;
+			if (attribute == "attackspeed" && prototype->isWeaponObject()) {
+				max = min;
+			}
+			if (attribute == "useCount" || attribute == "quantity" || attribute == "charges" || attribute == "uses" || attribute == "charge") {
+				int newvalue = max + System::random(max * 2);
+				min = newvalue;
+				max = newvalue;
+				continue;
+			}
+			if (prototype->isComponent()) {
+				min *= 1.25;
+				max *= 1.75;
+			}
+			if (prototype->isArmorObject()) {
+				if (attribute == "armor_health_encumbrance" || attribute == "armor_action_encumbrance" || attribute == "armor_mind_encumbrance")
+				  continue;
+				min *= 1.25;
+				max *= 1.75;
+			}
+			excMod *= 1.25 + (System::random(25000) * .00001);
+			if (max > min && min >= 0) { // Both max and min non-negative, max is higher
+				min *= excMod;
+				max *= excMod;
+			} else if (max > min && max <= 0) { // Both max and min are non-positive, max is higher
+				min /= excMod;
+				max /= excMod;
+			} else if (max > min) { // max is positive, min is negative
+				min /= excMod;
+				max *= excMod;
+			} else if (max < min && max >= 0) { // Both max and min are non-negative, min is higher
+				min /= excMod;
+				max /= excMod;
+			} else if (max < min && min <= 0) { // Both max and min are non-positive, min is higher
+				min *= excMod;
+				max *= excMod;
+			} else { // max is negative, min is positive
+				min /= excMod;
+				max *= excMod;
+			}
+			attrDebugEntry["min"] = min;
+			attrDebugEntry["max"] = max;
 		}
+		attrDebug[attribute] = attrDebugEntry;
 
 		if (!attrDebug.empty()) {
 			trx.addState("lootAttributeDebug", attrDebug);
@@ -351,11 +395,27 @@ void LootManagerImplementation::setRandomLootValues(TransactionLog& trx, Tangibl
 	}
 }
 
+void LootManagerImplementation::setSockets(TangibleObject* object, float excMod) {
+	if (!object->isWearableObject()) {
+		return;
+	}
+	ManagedReference<WearableObject*> wearableObject = cast<WearableObject*>(object);
+	if (excMod > legendaryModifier) {
+		wearableObject->setMaxSockets(10);
+	}
+	wearableObject->setMaxSocket(System::random(5) + 5);
+}
+
 TangibleObject* LootManagerImplementation::createLootObject(TransactionLog& trx, const LootItemTemplate* templateObject, int level, bool maxCondition) {
 #ifdef DEBUG_LOOT_MAN
 	info(true) << " ---------- LootManagerImplementation::createLootObject -- called ----------";
 #endif
 
+	int uncappedLevel = level;
+	if (level < 1)
+		level = 1;
+	if (level > 350)
+		level = 350;
 	const String& directTemplateObject = templateObject->getDirectObjectTemplate();
 	level = Math::clamp((int)LEVELMIN, level, (int)LEVELMAX);
 
@@ -367,10 +427,6 @@ TangibleObject* LootManagerImplementation::createLootObject(TransactionLog& trx,
 #ifdef DEBUG_LOOT_MAN
 	info(true) << "Item Template: " << directTemplateObject << "    Level = " << level;
 #endif
-
-	if (templateObject->isRandomResourceContainer()) {
-		return createLootResource(templateObject->getTemplateName(), "tatooine");
-	}
 
 	ManagedReference<TangibleObject*> prototype = zoneServer->createObject(directTemplateObject.hashCode(), 2).castTo<TangibleObject*>();
 
@@ -392,13 +448,20 @@ TangibleObject* LootManagerImplementation::createLootObject(TransactionLog& trx,
 	}
 
 	// Calculate level rank value chance
-	float chance = LootValues::getLevelRankValue(Math::max(level - 50, 0), 0.f, 0.35f) * levelChance;
-	float excMod = baseModifier;
+	float excMod = 1.0 + (System::random(15) / 10);
+	float chance = legendaryChance + chanceModifier;
+	if (chance > 20) {
+		chance = 20;
+	}
+	float levelChance = 100;
+	if (level > levelChance)
+		levelChance = level;
 
-	if (System::random(legendaryChance) <= chance) {
+	if (System::random(levelChance) + 50 >= System::random(legendaryChance * 350)) {
+		level += System::random(350);
+		if (level > 350)
+			level = 350;
 		excMod = legendaryModifier;
-	} else if (System::random(exceptionalChance) <= chance) {
-		excMod = exceptionalModifier;
 	}
 
 #ifdef DEBUG_LOOT_MAN
@@ -415,15 +478,14 @@ TangibleObject* LootManagerImplementation::createLootObject(TransactionLog& trx,
 	// Set the value for those items that can be sold at a junk dealer
 	setJunkValue(prototype, templateObject, level, excMod);
 
-	// Chance to add skill modifiers to weapons and wearable objects (clothing, armor)
-	if (prototype->isWeaponObject() || prototype->isWearableObject()) {
-		setSkillMods(prototype, templateObject, level, excMod);
-	}
-
 	// Add static DoT's to weapons and check for chance to add random DoTs
 	if (prototype->isWeaponObject()) {
 		addStaticDots(prototype, templateObject, level);
 		addRandomDots(prototype, templateObject, level, excMod);
+	}
+
+	if (prototype->isWearableObject()) {
+		setSockets(prototype);
 	}
 
 	// Add some condition damage to the looted item if it is a weapon or piece of armor
@@ -652,7 +714,7 @@ bool LootManagerImplementation::createLootFromCollection(TransactionLog& trx, Sc
 		if (lootChance <= 0)
 			continue;
 
-		int roll = System::random(10000000);
+		int roll = System::random(10000000 / 2);
 
 		rolls.add(roll);
 
@@ -665,9 +727,14 @@ bool LootManagerImplementation::createLootFromCollection(TransactionLog& trx, Sc
 		const LootGroups* lootGroups = collectionEntry->getLootGroups();
 
 		//Now we do the second roll to determine loot group.
-		roll = System::random(10000000);
+		roll = System::random(10000000 / 2);
 
 		rolls.add(roll);
+
+		int holochance = 100;
+		if (System::random(holochance) >= holochance) {
+			createLoot(trx, container, "jedi_holocron_light", level);
+		}
 
 		//Select the loot group to use.
 		for (int k = 0; k < lootGroups->count(); ++k) {
@@ -872,13 +939,13 @@ void LootManagerImplementation::addStaticDots(TangibleObject* object, const Loot
 				attribute = (int)(attribute / 3.f) * 3;
 			}
 		} else if (property == "strength") {
-			strength = LootValues::getDistributedValue(min, max, level);
+			strength = LootValues::getDistributedValue(max, max, level);
 		} else if (property == "duration") {
-			duration = LootValues::getDistributedValue(min, max, level);
+			duration = LootValues::getDistributedValue(max, max, level);
 		} else if (property == "potency") {
-			potency = LootValues::getDistributedValue(min, max, level);
+			potency = LootValues::getDistributedValue(max, max, level);
 		} else if (property == "uses") {
-			uses = LootValues::getDistributedValue(min, max, level);
+			uses = LootValues::getDistributedValue(max, max * 5, level);
 		}
 	}
 

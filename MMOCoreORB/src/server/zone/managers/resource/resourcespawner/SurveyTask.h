@@ -47,6 +47,9 @@ public:
 		}
 
 		playerCreature->removePendingTask("survey");
+	} else {
+		// Send System Message that you can still sample
+		playerCreature->sendSystemMessage("Resources can be sampled aywhere.");
 	}
 };
 

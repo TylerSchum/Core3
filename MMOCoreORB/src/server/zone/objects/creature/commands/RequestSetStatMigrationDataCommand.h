@@ -86,7 +86,10 @@ public:
 		// Player is in the tutorial zone and is allowed to migrate stats.
 		auto zone = creature->getZone();
 
-		if ((zone != nullptr && zone->getZoneName() == "tutorial") || privilegedPlayer) {
+		ManagedReference<SceneObject*> salon = creature->getParentRecursively(SceneObjectType::SALONBUILDING);
+
+		if ((zone != nullptr && zone->getZoneName() == "tutorial") || privilegedPlayer || salon != nullptr) {
+			creature->clearBuffs(true, false);
 			session->migrateStats();
 
 			if (privilegedPlayer) {

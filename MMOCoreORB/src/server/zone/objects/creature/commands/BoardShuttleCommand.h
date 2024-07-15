@@ -70,7 +70,7 @@ public:
 			return GENERALERROR;
 		}
 
-		if (!shuttle->isInRange(creature, 25.f)) {
+		if (!shuttle->isInRange(creature, 84.f)) {
 			creature->sendSystemMessage("@player_structure:boarding_too_far"); //You are too far from the shuttle to board.
 			return GENERALERROR;
 		}
@@ -130,11 +130,6 @@ public:
 		}
 
 		Reference<PlanetTravelPoint*> arrivalPoint = arrivalZone->getPlanetManager()->getPlanetTravelPoint(arrivalPointName);
-
-		if (arrivalPoint == nullptr || !closestPoint->canTravelTo(arrivalPoint)) {
-			creature->sendSystemMessage("@travel:wrong_shuttle"); //The ticket is not valid for the given shuttle.
-			return GENERALERROR;
-		}
 
 		ManagedReference<CreatureObject*> targetShuttleObject = arrivalPoint->getShuttle();
 

@@ -160,67 +160,40 @@ public:
 		return DeltaVector<ManagedReference<TangibleObject*> >::remove(index, message, updates);
 	}
 
+	Vector<ManagedReference<ArmorObject*> > getAvailableArmor(Vector<ManagedReference<ArmorObject*> priorityArmor, Vector<ManagedReference<ArmorObject*> fallback1Armor, Vector<ManagedReference<ArmorObject*> fallback2Armor, Vector<ManagedReference<ArmorObject*> fallback3Armor, Vector<ManagedReference<ArmorObject*> fallback4Armor) const {
+		if(!priorityArmor.isEmpty())
+			return priorityArmor;
+		if(!fallback1Armor.isEmpty())
+			return fallback1Armor;
+		if(!fallback2Armor.isEmpty())
+			return fallback2Armor;
+		if(!fallback3Armor.isEmpty())
+			return fallback3Armor;
+		return fallback4Armor;
+	}
+
 
 	Vector<ManagedReference<ArmorObject*> > getArmorAtHitLocation(uint8 hitLocation) const {
+
+		Vector<ManagedReference<ArmorObject*>> noLocationArmor= protectionArmorMap.get((uint8)ArmorObjectTemplate::NOLOCATION);
+		Vector<ManagedReference<ArmorObject*>> chestArmor = protectionArmorMap.get((uint8)ArmorObjectTemplate::CHEST);
+		Vector<ManagedReference<ArmorObject*>> armArmor = protectionArmorMap.get((uint8)ArmorObjectTemplate::ARMS);
+		Vector<ManagedReference<ArmorObject*>> legArmor = protectionArmorMap.get((uint8)ArmorObjectTemplate::LEGS);
+		Vector<ManagedReference<ArmorObject*>> headArmor = protectionArmorMap.get((uint8)ArmorObjectTemplate::HEAD);
 		// TODO: Migrate and remove this when the object versioning and migration system is in place
-		switch(hitLocation) {
-			case HitLocation::HIT_BODY: {
-				return protectionArmorMap.get((uint8)ArmorObjectTemplate::CHEST);
-			}
-
-			case HitLocation::HIT_HEAD: {
-				return protectionArmorMap.get((uint8)ArmorObjectTemplate::HEAD);
-			}
-
-			case HitLocation::HIT_RARM:
-			case HitLocation::HIT_LARM: {
-				Vector<ManagedReference<ArmorObject*> > armArmor = protectionArmorMap.get((uint8)ArmorObjectTemplate::ARMS);
-				Vector<ManagedReference<ArmorObject*> > armorAtLocation;
-
-				if (armArmor.isEmpty()) {
-					return armArmor;
-				}
-
-				if (hitLocation == HitLocation::HIT_LARM) {
-					for (int i = armArmor.size() - 1; i >= 0; i--) {
-						ArmorObject* obj = armArmor.get(i);
-
-						if (obj == nullptr) {
-							continue;
-						}
-
-						if(obj->hasArrangementDescriptor("bicep_l") || obj->hasArrangementDescriptor("bracer_upper_l") || obj->hasArrangementDescriptor("gloves")) {
-							armorAtLocation.add(obj);
-						}
-					}
-				} else {
-					for (int i = armArmor.size() - 1; i >= 0; i--) {
-						ArmorObject* obj = armArmor.get(i);
-
-						if (obj == nullptr) {
-							continue;
-						}
-
-						if(obj->hasArrangementDescriptor("bicep_r") || obj->hasArrangementDescriptor("bracer_upper_r") || obj->hasArrangementDescriptor("gloves")) {
-							armorAtLocation.add(obj);
-						}
-					}
-				}
-
-				if (armorAtLocation.isEmpty()) {
-					return armArmor;
-				} else {
-					return armorAtLocation;
-				}
-			}
-
-			case HitLocation::HIT_LLEG:
-			case HitLocation::HIT_RLEG: {
-				return protectionArmorMap.get((uint8)ArmorObjectTemplate::LEGS);
-			}
+		if (hl == 1) {//chest
+			getAvailableArmor(chestArmor, armArmor, legArmor, headArmor, noLocationArmor);
 		}
-
-		return protectionArmorMap.get((uint8)ArmorObjectTemplate::NOLOCATION);
+		if (hl == 2 || hl == 3) {//arms
+			getAvailableArmor(armArmor, chestArmor, legArmor, headArmor, noLocationArmor);
+		}
+		if (hl == 4 || hl == 5) {//legs
+			getAvailableArmor(legArmor, armArmor, chestArmor, headArmor, noLocationArmor);
+		}
+		if (hl == 6) {//head
+			getAvailableArmor(headArmor, armArmor, legArmor, chestArmor, noLocationArmor);
+		}
+		return noLocationArmor;
 	}
 
 	void addArmor(uint8 hitLocation, ManagedReference<ArmorObject*> armor) {
