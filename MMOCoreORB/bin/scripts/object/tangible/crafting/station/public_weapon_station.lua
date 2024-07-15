@@ -68,7 +68,19 @@ object_tangible_crafting_station_public_weapon_station = object_tangible_craftin
    customizationOptions = {},
    customizationDefaults = {},
 
-   stationType = 7,   complexityLevel = 25
+   stationType = 7,
+	 complexityLevel = 100,
+	 usemodifier = 25,
+
+	 numberExperimentalProperties = {1, 1, 1, 1},
+	 experimentalProperties = {"XX", "XX", "XX", "CD"},
+	 experimentalWeights = {1, 1, 1, 1},
+	 experimentalGroupTitles = {"null", "null", "null", "exp_effectiveness"},
+	 experimentalSubGroupTitles = {"null", "null", "hitpoints", "usemodifier"},
+	 experimentalMin = {0, 0, 1000, -15},
+	 experimentalMax = {0, 0, 1000, 15},
+	 experimentalCombineType = {0, 0, 4, 1},
+	 experimentalPrecision = {0, 0, 0, 0},
 }
 
 ObjectTemplates:addTemplate(object_tangible_crafting_station_public_weapon_station, "object/tangible/crafting/station/public_weapon_station.iff")

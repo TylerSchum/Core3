@@ -30,7 +30,15 @@ tusken_warrior = Creature:new {
 	lootGroups = {
 		{
 			groups = {
-				{group = "tusken_raider_tier_1", chance = 10000000}
+				{group = "junk", chance = 1500000},
+				{group = "tusken_common", chance = 3000000},
+				{group = "wearables_common", chance = 2000000},
+				{group = "bone_armor", chance = 750000},
+				{group = "chitin_armor", chance = 750000},
+				{group = "armor_attachments", chance = 500000},
+				{group = "clothing_attachments", chance = 500000},
+				{group = "color_crystals", chance = 500000},
+				{group = "power_crystals", chance = 500000}
 			}
 		}
 	},
@@ -43,8 +51,7 @@ tusken_warrior = Creature:new {
 
 	-- primaryAttacks and secondaryAttacks should be separate skill groups specific to the weapon type listed in primaryWeapon and secondaryWeapon
 	-- Use merge() to merge groups in creatureskills.lua together. If a weapon is set to "none", set the attacks variable to empty brackets
-	primaryAttacks = merge(marksmanmaster,riflemannovice),
-	secondaryAttacks = merge(brawlermaster,fencernovice)
+	primaryAttacks = merge(marksmanmaster,riflemannovice,fencermaster,riflemanmaster)
 }
 
 CreatureTemplates:addCreatureTemplate(tusken_warrior, "tusken_warrior")

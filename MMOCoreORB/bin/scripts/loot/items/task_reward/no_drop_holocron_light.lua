@@ -9,6 +9,7 @@ no_drop_holocron_light = {
 	},
 	customizationStringNames = {},
 	customizationValues = {}
+	noTrade = 1,
 }
 
 addLootItemTemplate("no_drop_holocron_light", no_drop_holocron_light)

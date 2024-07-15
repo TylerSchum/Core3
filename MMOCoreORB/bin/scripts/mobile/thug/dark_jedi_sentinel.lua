@@ -5,7 +5,7 @@ dark_jedi_sentinel = Creature:new {
 	mobType = MOB_NPC,
 	socialGroup = "self",
 	faction = "",
-	level = 1,
+	level = 500,
 	chanceHit = 30,
 	damageMin = 2645,
 	damageMax = 5000,
@@ -13,7 +13,7 @@ dark_jedi_sentinel = Creature:new {
 	baseHAM = 1106000,
 	baseHAMmax = 1352000,
 	armor = 3,
-	resists = {95,95,95,95,95,95,95,95,-1},
+	resists = {95,95,95,95,95,95,95,95,95},
 	meatType = "",
 	meatAmount = 0,
 	hideType = "",
@@ -36,7 +36,7 @@ dark_jedi_sentinel = Creature:new {
 	-- Unarmed should be put on secondary unless the mobile doesn't use weapons, in which case "unarmed" should be put primary and "none" as secondary
 	primaryWeapon = "dark_jedi_weapons_gen4",
 	secondaryWeapon = "dark_jedi_weapons_ranged",
-	conversationTemplate = "",
+	conversationTemplate = "darkfrsTrainerConvoTemplate",
 
 	-- primaryAttacks and secondaryAttacks should be separate skill groups specific to the weapon type listed in primaryWeapon and secondaryWeapon
 	-- Use merge() to merge groups in creatureskills.lua together. If a weapon is set to "none", set the attacks variable to empty brackets

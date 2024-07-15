@@ -71,7 +71,8 @@ object_tangible_crafting_station_structure_station = object_tangible_crafting_st
 	customizationDefaults = {},
 
 	stationType = 6,
-	complexityLevel = 100,
+  complexityLevel = 100,
+  usemodifier = 25,
 
 	numberExperimentalProperties = {1, 1, 1, 1},
 	experimentalProperties = {"XX", "XX", "XX", "CD"},

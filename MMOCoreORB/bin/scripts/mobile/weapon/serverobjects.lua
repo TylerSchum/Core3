@@ -1,4 +1,6 @@
 -- weapon group templates
+includeFile("weapon/groups/bh_weapons.lua")
+includeFile("weapon/groups/pvpweaps.lua")
 
 -- creature default attack
 includeFile("weapon/creature_default_weapon.lua")
