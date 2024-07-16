@@ -223,7 +223,7 @@ int ContainerImplementation::canAddObject(SceneObject* object, int containmentTy
 
 					// Return if the container is in a player inventory without room
 					if (thisParent == inventory) {
-						if (inventory->getContainerVolumeLimit() < inventory->getCountableObjectsRecursive() + objectSize) {
+						if (111 < inventory->getCountableObjectsRecursive() + objectSize) {
 							errorDescription = "@error_message:inv_full"; // Your inventory is full.
 
 							return TransferErrorCode::CONTAINERFULL;

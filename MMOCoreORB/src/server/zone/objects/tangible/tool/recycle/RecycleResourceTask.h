@@ -133,6 +133,7 @@ public:
 	// 	trx.addState("reason", "removeFromRecycler: " + reason);
 	// 	TransferItemMiscCommand::doTransferItemMisc(player, insertedItem, inventory, -1, trx);
 	// }
+	}
 };
 
 #endif /* RECYCLERESOURCETASK_H_ */

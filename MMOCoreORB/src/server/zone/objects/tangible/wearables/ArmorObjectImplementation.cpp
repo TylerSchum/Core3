@@ -155,19 +155,19 @@ void ArmorObjectImplementation::fillAttributeList(AttributeListMessage* alm, Cre
 		alm->insertAttribute("cat_armor_effectiveness.armor_eff_elemental_heat",txt.toString());
 	}
 
-	if (getCold() >= 0.5)) {
+	if (getCold() >= 0.5) {
 		StringBuffer txt;
 		txt << Math::getPrecision(getCold(),1) << "%";
 		alm->insertAttribute("cat_armor_effectiveness.armor_eff_elemental_cold", txt.toString());
 	}
 
-	if (getAcid() >= 0.5)) {
+	if (getAcid() >= 0.5) {
 		StringBuffer txt;
 		txt << Math::getPrecision(getAcid(),1) << "%";
 		alm->insertAttribute("cat_armor_effectiveness.armor_eff_elemental_acid", txt.toString());
 	}
 
-	if (getLightSaber() >= 0.5)) {
+	if (getLightSaber() >= 0.5) {
 		StringBuffer txt;
 		txt << Math::getPrecision(getLightSaber(),1) << "%";
 		alm->insertAttribute("cat_armor_effectiveness.armor_eff_restraint", txt.toString());

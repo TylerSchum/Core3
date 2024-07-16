@@ -342,7 +342,7 @@ void WeaponObjectImplementation::fillAttributeList(AttributeListMessage* alm, Cr
 
 	// Force Cost
 	if (getForceCost() > 0)
-		alm->insertAttribute("forcecost", (int)getForceCost());
+		alm->insertAttribute("forcecost", (float)getForceCost());
 
 	for (int i = 0; i < getNumberOfDots(); i++) {
 
@@ -723,10 +723,10 @@ void WeaponObjectImplementation::decay(CreatureObject* user) {
 	}
 
 	int roll = System::random(100);
-	int chance = 5;
+	int chance = 1;
 
 	if (hasPowerup())
-		chance += 10;
+		chance += 2;
 
 	if (roll < chance) {
 		Locker locker(_this.getReferenceUnsafeStaticCast());
