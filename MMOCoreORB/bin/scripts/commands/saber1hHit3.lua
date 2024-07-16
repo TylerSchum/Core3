@@ -53,7 +53,7 @@ Saber1hHit3Command = {
 	forceCostMultiplier = 2.0,
 	visMod = 25,
 
-	animation = "combo_3b",
+	animation = "combo_3b", 
 	animType = GENERATE_INTENSITY,
 
 	stateEffects = {
@@ -71,7 +71,7 @@ Saber1hHit3Command = {
 	combatSpam = "saber1hhit3",
 
 	poolsToDamage = RANDOM_ATTRIBUTE,
-
+	
 	weaponType = JEDIWEAPON,
 
 	range = -1

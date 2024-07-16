@@ -8,6 +8,8 @@
 #ifndef UNSTICKCOMMAND_H_
 #define UNSTICKCOMMAND_H_
 
+#include "server/zone/objects/scene/SceneObject.h"
+
 class UnstickCommand : public QueueCommand {
 public:
 
@@ -50,6 +52,15 @@ public:
 			}
 
 		if (!player->checkCooldownRecovery("used_unstick")) {
+//			StringIdChatParameter stringId;
+//
+//			Time* cdTime = player->getCooldownTime("used_unstick");
+//
+//
+//			int timeLeft = floor((float)cdTime->miliDifference() / 1000) *-1;
+//
+//			stringId.setStringId("You must waiting....");
+//			stringId.setDI(timeLeft);
 			player->sendSystemMessage("Unstick is on a 5 minute cooldown.");
 			return 0;
 		}
@@ -62,10 +73,8 @@ public:
 		player->addCooldown("used_unstick", 5 * 60 * 1000);
 		player->sendSystemMessage("You have been teleported to a safe spot. Wait 15 seconds for recalibration.");
 
-		return SUCCESS;
+	return SUCCESS;
 	}
-
 };
 
 #endif //UNSTICKCOMMAND_H_
-

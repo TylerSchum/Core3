@@ -191,7 +191,7 @@ class FindTargetTask : public Task, public Logger {
 
 		int time = 150 - skillMod;
 
-		int finalTime = 10 + (System::random(time) / 2)
+		int finalTime = 10 + (System::random(time) / 2);
 		return finalTime;
 	}
 

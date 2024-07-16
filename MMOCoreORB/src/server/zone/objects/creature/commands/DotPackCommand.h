@@ -211,6 +211,16 @@ public:
 
 	void doAreaMedicActionTarget(CreatureObject* creature, CreatureObject* targetCreature, DotPack* dotPack) const {
 		int dotPower = dotPack->calculatePower(creature);
+
+		//sendDotMessage(creature, creatureTarget, dotPower);
+
+		if (dotPower > 125)
+			dotPower = ((dotPower - 125) / 2) + 125;
+		if (dotPower > 250)
+			dotPower = ((dotPower - 250) / 5) + 250;
+		if (dotPower > 350)
+			dotPower = ((dotPower - 350) / 10) + 350;
+
 		int dotDMG = 0;
 
 		if (dotPack->isPoisonDeliveryUnit()) {
@@ -242,8 +252,13 @@ public:
 		if (dotDMG) {
 			awardXp(creature, "medical", dotDMG); // No experience for healing yourself.
 
-			targetCreature->getThreatMap()->addDamage(creature, dotDMG, "dotDMG");
+			targetCreature->addDefender(creature);
+			targetCreature->getThreatMap()->addDamage(creature, dotDMG, "");
 			creature->addDefender(targetCreature);
+
+//			creatureTarget->setDefender(creature);
+//			creature->setDefender(creatureTarget);
+			//creature->addDefender(creatureTarget);
 		} else {
 			StringIdChatParameter stringId("dot_message", "dot_resisted");
 			stringId.setTT(targetCreature->getObjectID());
@@ -355,9 +370,13 @@ public:
 
 		int	range = int(dotPack->getRange() + creature->getSkillMod("healing_range") / 100 * 14);
 
-		// Distance Check
-		if (!checkDistance(creature, targetCreature, range))
-			return TOOFAR;
+		if(!checkDistance(creature, targetCreature, range))
+					return TOOFAR;
+		//timer
+		if (!creature->checkCooldownRecovery(skillName)) {//cooldownrecovery
+			creature->sendSystemMessage("@healing_response:healing_must_wait"); //You must wait before you can do that.
+			return GENERALERROR;
+		}
 
 		// Checks Successful
 		Locker clocker(targetCreature, creature);
@@ -373,12 +392,43 @@ public:
 
 				delay = round(delay * (100.0f - percent) / 100.0f);
 			}
+
+			//Force the delay to be at least 4 seconds.
+			delay = (delay < 4) ? 4 : delay;//delay
+
+			creature->addCooldown(skillName, delay * 1000);
 		}
 
 		// If the delay is less that 4 seconds, use the default time
 		delay = (delay < 4) ? defaultTime : delay;
 
-		creature->addCooldown(skillName, delay * 1000);
+
+		int wrange = creature->getWeapon()->getMaxRange();
+
+		if(!checkDistance(creature, targetCreature, wrange))
+					return TOOFAR;
+
+//		if (creature->getWorldPosition().distanceTo(object->getWorldPosition()) - attacker->getTemplateRadius() - object->getTemplateRadius() > range) {
+//
+//
+//		if (creature->getWorldPosition().distanceTo(targetCreature->getWorldPosition()) > wrange) {
+//
+//		}
+
+		creature->executeObjectControllerAction(STRING_HASHCODE("attack"), targetCreature->getObjectID(), "");
+
+//		combatManager->startCombat(creature, targetCreature);
+
+		//if (!combatManager->startCombat(creature, targetCreature)) {
+
+//		targetCreature->addDefender(creature);
+//		creature->addDefender(targetCreature);
+//
+//		targetCreature->setDefender(creature);
+//		creature->setDefender(targetCreature);
+//
+//		targetCreature->inflictDamage(creature, CreatureAttribute::HEALTH, 1, true, "medical", true, true);
+
 
 		applyCost(creature, cost);
 
@@ -386,7 +436,14 @@ public:
 		int dotDMG = 0;
 		bool isPoisonDot = dotPack->isPoisonDeliveryUnit();
 
-		if (isPoisonDot) {
+		if (dotPower > 125)
+			dotPower = ((dotPower - 125) / 2) + 125;
+		if (dotPower > 250)
+			dotPower = ((dotPower - 250) / 5) + 250;
+		if (dotPower > 350)
+			dotPower = ((dotPower - 350) / 10) + 350;
+
+		if (dotPack->isPoisonDeliveryUnit()) {
 			if (!targetCreature->hasDotImmunity(dotPack->getDotType())) {
 				StringIdChatParameter stringId("healing", "apply_poison_self");
 				stringId.setTT(targetCreature->getObjectID());

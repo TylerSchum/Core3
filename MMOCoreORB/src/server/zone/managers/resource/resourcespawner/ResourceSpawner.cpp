@@ -173,7 +173,7 @@ void ResourceSpawner::loadResourceSpawns() {
 
 		resourceMap->add(resourceSpawn->getName(), resourceSpawn);
 
-		if (!resourceSpawn->inShift()) {
+		if (!resourceSpawn->inShift()) { //bingo bango, remove the if to force despawn of all mats? // works
 			despawn(resourceSpawn);
 			continue;
 		}
@@ -300,7 +300,7 @@ bool ResourceSpawner::writeAllSpawnsToScript() {
 	try {
 
 		File* file = new File("scripts/managers/resource_manager_spawns.lua");
-		//if(!file->exists()) {
+		//if(!file->exists()) { // this looks powerful!
 		//	delete file;
 		//	return;
 		//}
@@ -937,24 +937,13 @@ void ResourceSpawner::sendSampleResults(TransactionLog& trx, CreatureObject* pla
 
 	Zone* zne = player->getZone();
 
-	if (zne == nullptr) {
-		trx.abort() << "Player zone nullptr";
+	if (zne == nullptr)
 		return;
-	}
 
 	String zoneName = zne->getZoneName();
 
 	// Lower skill levels mean you can't sample lower concetrations
 	int surveySkill = player->getSkillMod("surveying");
-
-	if ((density * 100) < (32 - ((surveySkill / 20) * 6)) || density < .10) {
-		StringIdChatParameter message("survey", "density_below_threshold");
-		message.setTO(resname);
-		player->sendSystemMessage(message);
-		player->setPosture(CreaturePosture::UPRIGHT, true);
-		trx.abort() << message.toString();
-		return;
-	}
 
 	Coordinate* richSampleLocation = session->getRichSampleLocation();
 

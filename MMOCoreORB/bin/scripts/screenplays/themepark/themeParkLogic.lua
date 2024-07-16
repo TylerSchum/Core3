@@ -2180,7 +2180,7 @@ function ThemeParkLogic:escortedNpcCloseEnough(pConversingPlayer)
 	local objectID = readData(CreatureObject(pConversingPlayer):getObjectID() .. ":missionSpawn:no1")
 	local pNpc = getSceneObject(objectID)
 
-	return pNpc ~= mil
+	return pNpc ~= nil
 end
 
 function ThemeParkLogic:resetThemePark(pConversingPlayer)

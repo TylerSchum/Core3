@@ -120,6 +120,8 @@ class Creature extends AiAgent {
 	@preLocked
 	public native void setPetLevel(int newLevel);
 
+	public native void scheduleDespawn();
+
 	public native boolean isVicious();
 
 	public boolean isBaby() {

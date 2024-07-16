@@ -13,6 +13,7 @@ tatooine_tusken_raider_village_neutral_large_theater = Lair:new {
 	buildingsMedium = {"object/building/poi/tatooine_tuskenbantha_large1.iff","object/building/poi/tatooine_tuskenbantha_large2.iff"},
 	buildingsHard = {"object/building/poi/tatooine_tuskenbantha_large1.iff","object/building/poi/tatooine_tuskenbantha_large2.iff"},
 	buildingsVeryHard = {"object/building/poi/tatooine_tuskenbantha_large1.iff","object/building/poi/tatooine_tuskenbantha_large2.iff"},
+		missionBuilding = "object/tangible/lair/base/objective_dantari_fire_pit.iff",
 	mobType = "npc",
 	buildingType = "theater"
 }

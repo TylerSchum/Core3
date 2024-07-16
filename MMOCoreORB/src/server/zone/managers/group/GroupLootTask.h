@@ -128,6 +128,8 @@ public:
 		//Pre: Corpse is locked.
 		//Post: Corpse is locked.
 
+		return; //disable credit split
+
 		int lootCredits = corpse->getCashCredits();
 
 		if (lootCredits < 1)

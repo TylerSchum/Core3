@@ -885,6 +885,42 @@ void FrsManagerImplementation::adjustFrsExperience(CreatureObject* player, int a
 			player->sendSystemMessage(param);
 		}
 	}
+//	else {
+//		FrsData* playerData = ghost->getFrsData();
+//		int rank = playerData->getRank();
+//		int councilType = playerData->getCouncilType();
+//
+//		int curExperience = ghost->getExperience("force_rank_xp");
+//
+//		// Ensure we dont go into the negatives
+//		if ((amount * -1) > curExperience)
+//			amount = curExperience * -1;
+//
+//		ghost->addExperience("force_rank_xp", amount, true);
+//
+//		if (sendSystemMessage) {
+//			StringIdChatParameter param("@force_rank:experience_lost"); // You have lost %DI Force Rank experience.
+//			param.setDI(amount * -1);
+//			player->sendSystemMessage(param);
+//		}
+//
+//		curExperience += amount;
+//
+//		Reference<FrsRankingData*> rankingData = nullptr;
+//
+//		if (councilType == COUNCIL_LIGHT)
+//			rankingData = lightRankingData.get(rank);
+//		else if (councilType == COUNCIL_DARK)
+//			rankingData = darkRankingData.get(rank);
+//
+//		if (rankingData == nullptr)
+//			return;
+//
+//		int reqXp = rankingData->getRequiredExperience();
+//
+//		if (reqXp > curExperience)
+//			demotePlayer(player);
+//	}
 }
 
 Vector<uint64> FrsManagerImplementation::getFullPlayerList() {

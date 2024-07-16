@@ -300,7 +300,7 @@ public:
 
 			sendHealMessage(creature, targetCreature, healthHealed, actionHealed, mindHealed);
 
-			awardXp(creature, "medical", (healthHealed + actionHealed));
+			awardXp(creature, "medical", (healthHealed + actionHealed + mindHealed));
 
 			checkForTef(creature, targetCreature);
 		}
@@ -492,7 +492,7 @@ public:
 		Locker locker(stimPack);
 		stimPack->decreaseUseCount();
 
-		awardXp(creature, "medical", (healthHealed + actionHealed));
+		awardXp(creature, "medical", (healthHealed + actionHealed + mindHealed));
 
 		if (targetCreature != creature)
 			clocker.release();

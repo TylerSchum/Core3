@@ -1,6 +1,6 @@
-trainer_light_sentinel = Creature:new {
+trainer_dark_sentinel = Creature:new {
 	objectName = "",
-	customName = "Jedi Council Member",
+	customName = "Dark Council Member",
 	randomNameType = NAME_GENERIC,
 	randomNameTag = true,
 	socialGroup = "self",

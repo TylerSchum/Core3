@@ -89,7 +89,6 @@ object_tangible_wearables_armor_padded_armor_padded_s01_chest_plate = object_tan
 
 	-- Damage types in WeaponObject
 	vulnerability = STUN + LIGHTSABER,
-
 	-- These are default Blue Frog stats
 	healthEncumbrance = 1,
 	actionEncumbrance = 1,

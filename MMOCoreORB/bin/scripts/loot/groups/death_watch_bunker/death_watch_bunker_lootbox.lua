@@ -11,8 +11,9 @@ death_watch_bunker_lootbox = {
 		{itemTemplate = "executioners_hack_schematic", weight = 1000000},
 		{itemTemplate = "fuel_dispersion_unit", weight = 500000},
 		{itemTemplate = "injector_tank", weight = 500000},
-		{itemTemplate = "mandalorian_rebreather", weight = 1200000},
-		{itemTemplate = "pistol_de10_schematic", weight = 800000}
+		{itemTemplate = "mandalorian_rebreather", weight = 800000},
+		{itemTemplate = "pistol_de10_schematic", weight = 800000},
+		{itemTemplate = "alum_mineral", weight = 400000}
 	}
 }
 

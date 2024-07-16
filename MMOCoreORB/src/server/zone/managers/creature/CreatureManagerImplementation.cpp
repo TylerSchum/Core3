@@ -135,15 +135,11 @@ SceneObject* CreatureManagerImplementation::spawnLair(unsigned int lairTemplate,
 			break;
 	}
 
-	uint32 conditionCalc = difficultyLevel * (900 + System::random(200)) / 2;
-
-	building->setMaxCondition(conditionCalc);
-	building->setConditionDamage(0, false);
-
  	building->setFaction(lairTmpl->getFaction());
  	building->setPvpStatusBitmask(ObjectFlag::ATTACKABLE);
  	building->setOptionsBitmask(0, false);
-
+ 	building->setMaxCondition(difficultyLevel * (900 + System::random(200)) / 2);
+ 	building->setConditionDamage(0, false);
  	building->initializePosition(x, z, y);
  	building->setDespawnOnNoPlayersInRange(true);
 
@@ -695,6 +691,12 @@ int CreatureManagerImplementation::notifyDestruction(TangibleObject* destructor,
 			} else if (trx.isEnabled() && !trx.isAborted()) {
 				trx.abort() << "createLoot failed for ai object for unknown reason.";
 			}
+			//double loot
+//			if (lootManager->createLoot(trx, creatureInventory, destructedObject)) {
+//				trx.commit(true);
+//			} else {
+//				trx.abort() << "createLoot failed for ai object.";
+//			}
 		}
 
 		// Check to see if we can expedite the despawn of this corpse

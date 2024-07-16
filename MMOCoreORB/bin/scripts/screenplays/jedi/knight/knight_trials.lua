@@ -203,10 +203,10 @@ function KnightTrials:notifyKilledHuntTarget(pPlayer, pVictim)
 	local playerFaction = CreatureObject(pPlayer):getFaction()
 	local playerCouncil = JediTrials:getJediCouncil(pPlayer)
 
-	if ((playerFaction == FACTIONIMPERIAL and playerCouncil == JediTrials.COUNCIL_LIGHT) or (playerFaction == FACTIONREBEL and playerCouncil == JediTrials.COUNCIL_DARK)) then
-		self:giveWrongFactionWarning(pPlayer, playerCouncil)
-		return 0
-	end
+--	if ((playerFaction == FACTIONIMPERIAL and playerCouncil == JediTrials.COUNCIL_LIGHT) or (playerFaction == FACTIONREBEL and playerCouncil == JediTrials.COUNCIL_DARK)) then
+--		self:giveWrongFactionWarning(pPlayer, playerCouncil)
+--		return 0
+--	end
 
 	local huntTarget = readScreenPlayData(pPlayer, "JediTrials", "huntTarget")
 	local targetCount = tonumber(readScreenPlayData(pPlayer, "JediTrials", "huntTargetCount"))

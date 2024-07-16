@@ -85,7 +85,7 @@ Saber2hFrenzyCommand = {
 		)
 	},
 
-	animation = "showoff_2",
+	animation = "showoff_1", 
 	animType = GENERATE_INTENSITY,
 
 	combatSpam = "saber2hfrenzy",

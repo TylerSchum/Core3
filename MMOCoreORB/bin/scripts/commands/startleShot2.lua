@@ -71,7 +71,7 @@ StartleShot2Command = {
 	animation = "fire_defender_posture_change_up",
 
 	combatSpam = "startleshot",
-
+	
 	weaponType = RIFLEWEAPON + PISTOLWEAPON + CARBINEWEAPON,
 
 	range = -1

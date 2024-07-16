@@ -420,9 +420,9 @@ void InstallationObjectImplementation::updateHopper(Time& workingTime, bool shut
 
 	int elapsedTime = (harvestUntil - lastHopperUpdate);
 
-	float harvestAmount = (elapsedTime / 60.0) * (spawnDensity * getExtractionRate());
+	float harvestAmount = (elapsedTime / 60.0) * (spawnDensity * getExtractionRate());//had x 100 here was working, moved to .idl
 
-	int availableCapacity = (int)(getHopperSizeMax() - getHopperSize());
+	int availableCapacity = (int)(getHopperSizeMax() - getHopperSize());//had x 100 here was working, moved to .idl
 	harvestAmount = harvestAmount > availableCapacity ? availableCapacity : harvestAmount;
 
 	if(harvestAmount < 0)

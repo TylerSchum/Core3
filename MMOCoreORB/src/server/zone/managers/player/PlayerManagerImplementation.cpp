@@ -1831,19 +1831,33 @@ void PlayerManagerImplementation::sendPlayerToCloner(CreatureObject* player, uin
 	uint64 preDesignatedFacilityOid = ghost->getCloningFacility();
 	ManagedReference<SceneObject*> preDesignatedFacility = server->getObject(preDesignatedFacilityOid);
 
-	int healthheal = player->getMaxHAM(CreatureAttribute::HEALTH);
-	int actionheal = player->getMaxHAM(CreatureAttribute::ACTION);
-	int mindheal = player->getMaxHAM(CreatureAttribute::MIND);
-	if (preDesignatedFacility == nullptr || preDesignatedFacility != cloner) {
-		player->addWounds(CreatureAttribute::HEALTH, healthheal / 3, true, false);
-		player->addWounds(CreatureAttribute::ACTION, actionheal / 3, true, false);
-		player->addWounds(CreatureAttribute::MIND, mindheal / 3, true, false);
+		player->setWounds(CreatureAttribute::HEALTH, 0, true);
+		player->setWounds(CreatureAttribute::STRENGTH, 0, true);
+		player->setWounds(CreatureAttribute::CONSTITUTION, 0, true);
+		player->setWounds(CreatureAttribute::ACTION, 0, true);
+		player->setWounds(CreatureAttribute::QUICKNESS, 0, true);
+		player->setWounds(CreatureAttribute::STAMINA, 0, true);
+		player->setWounds(CreatureAttribute::MIND, 0, true);
+		player->setWounds(CreatureAttribute::FOCUS, 0, true);
+		player->setWounds(CreatureAttribute::WILLPOWER, 0, true);
+		player->setShockWounds(0, true);
+
+		int healthheal = player->getMaxHAM(CreatureAttribute::HEALTH);
+		int actionheal = player->getMaxHAM(CreatureAttribute::ACTION);
+		int mindheal = player->getMaxHAM(CreatureAttribute::MIND);
+
+		player->healDamage(player, CreatureAttribute::HEALTH, healthheal, true);
+		player->healDamage(player, CreatureAttribute::ACTION, actionheal, true);
+		player->healDamage(player, CreatureAttribute::MIND, mindheal, true);
+
+
+	if (preDesignatedFacility == nullptr) {
+		player->addWounds(CreatureAttribute::HEALTH, healthheal / 2, true, false);
+		player->addWounds(CreatureAttribute::ACTION, actionheal / 2, true, false);
+		player->addWounds(CreatureAttribute::MIND, mindheal / 2, true, false);
 		player->addShockWounds(500, true);
 	}
-	player->healDamage(player, CreatureAttribute::HEALTH, healthheal, true);
-	player->healDamage(player, CreatureAttribute::ACTION, actionheal, true);
-	player->healDamage(player, CreatureAttribute::MIND, mindheal, true);
-
+	
 	if (player->getFactionStatus() != FactionStatus::ONLEAVE && cbot->getFacilityType() != CloningBuildingObjectTemplate::FACTION_IMPERIAL && cbot->getFacilityType() != CloningBuildingObjectTemplate::FACTION_REBEL && !player->hasSkill("force_title_jedi_rank_03"))
 		player->setFactionStatus(FactionStatus::ONLEAVE);
 
@@ -2151,7 +2165,8 @@ void PlayerManagerImplementation::disseminateExperience(TangibleObject* destruct
 				float xpAmount = baseXp;
 				int playerLevel = calculatePlayerLevel(attackerCreo, xpType);
 
-				xpAmount *= (float) damage / totalDamage;
+				//xpAmount *= (float) damage / totalDamage;
+				xpAmount *= (float) 1 / entry->size(); //size is how many weaps used
 
 				//Cap xp based on level
 				xpAmount = Math::min(xpAmount, playerLevel * 300.f);
@@ -3144,17 +3159,11 @@ int PlayerManagerImplementation::healEnhance(CreatureObject* enhancer, CreatureO
 		}
 	}
 
-	duration = 8 * 60 * 60;
+	duration = 8 * 60 * 60;//8hrs
 
-	// Twi'lek race receives a 10% duration bonus
-	if (patient->getSpeciesName() == "twilek") {
-		duration *= 1.10f;
-	}
-
+	//duration *= 2;
 	Reference<Buff*> buff = new Buff(patient, buffcrc, duration, BuffType::MEDICAL);
-
 	Locker locker(buff);
-
 	if (BuffAttribute::isProtection(attribute)) {
 		buff->setSkillModifier(BuffAttribute::getProtectionString(attribute), buffvalue);
 
@@ -6393,21 +6402,61 @@ void PlayerManagerImplementation::enhanceCharacter(CreatureObject* player) {
 	if (player == nullptr)
 		return;
 
+//	int level = calculatePlayerLevel(player);
+
 	bool message = true;
 
-	message = message && doEnhanceCharacter(0x98321369, player, medicalBuff, medicalDuration, BuffType::MEDICAL, 0); // medical_enhance_health
-	message = message && doEnhanceCharacter(0x815D85C5, player, medicalBuff, medicalDuration, BuffType::MEDICAL, 1); // medical_enhance_strength
-	message = message && doEnhanceCharacter(0x7F86D2C6, player, medicalBuff, medicalDuration, BuffType::MEDICAL, 2); // medical_enhance_constitution
-	message = message && doEnhanceCharacter(0x4BF616E2, player, medicalBuff, medicalDuration, BuffType::MEDICAL, 3); // medical_enhance_action
-	message = message && doEnhanceCharacter(0x71B5C842, player, medicalBuff, medicalDuration, BuffType::MEDICAL, 4); // medical_enhance_quickness
-	message = message && doEnhanceCharacter(0xED0040D9, player, medicalBuff, medicalDuration, BuffType::MEDICAL, 5); // medical_enhance_stamina
+//	int selfDuration = 4 * 60 * 60; //hrs x min x sec
+//
+//	//if (level > 200) level = 200;
+//	int lvlbuff = level * 10;// 250cap x 10
+//
+//	if (lvlbuff > 1000) lvlbuff = 1000;
+////move to calculate plater (isincombat or isinmunicipal zone or city or w/e
+//	message = message && doEnhanceCharacter(0x98321369, player, lvlbuff * 2, selfDuration, BuffType::INNATE, 0); //
+//	message = message && doEnhanceCharacter(0x815D85C5, player, lvlbuff * 2, selfDuration, BuffType::INNATE, 1); //
+//	message = message && doEnhanceCharacter(0x7F86D2C6, player, lvlbuff * 2, selfDuration, BuffType::INNATE, 2); //
+//	message = message && doEnhanceCharacter(0x4BF616E2, player, lvlbuff * 2, selfDuration, BuffType::INNATE, 3); //
+//	message = message && doEnhanceCharacter(0x71B5C842, player, lvlbuff * 2, selfDuration, BuffType::INNATE, 4); //
+//	message = message && doEnhanceCharacter(0xED0040D9, player, lvlbuff * 2, selfDuration, BuffType::INNATE, 5); //
+//	message = message && doEnhanceCharacter(0x11C1772E, player, lvlbuff * 1.5, selfDuration, BuffType::INNATE, 6); //
+//	message = message && doEnhanceCharacter(0x2E77F586, player, lvlbuff * 1.5, selfDuration, BuffType::INNATE, 7); //
+//	message = message && doEnhanceCharacter(0x3EC6FCB6, player, lvlbuff * 1.5, selfDuration, BuffType::INNATE, 8); //
+//
+//	//remove the old buff : | keep in for a month or so
+//	message = message && doEnhanceCharacter(0x98321361, player, 0, 0, BuffType::INNATE, 0); //
+//	message = message && doEnhanceCharacter(0x815D85C1, player, 0, 0, BuffType::INNATE, 1); //
+//	message = message && doEnhanceCharacter(0x7F86D2C1, player, 0, 0, BuffType::INNATE, 2); //
+//	message = message && doEnhanceCharacter(0x4BF616E1, player, 0, 0, BuffType::INNATE, 3); //
+//	message = message && doEnhanceCharacter(0x71B5C841, player, 0, 0, BuffType::INNATE, 4); //
+//	message = message && doEnhanceCharacter(0xED0040D1, player, 0, 0, BuffType::INNATE, 5); //
+//	message = message && doEnhanceCharacter(0x11C17721, player, 0, 0, BuffType::INNATE, 6); //
+//	message = message && doEnhanceCharacter(0x2E77F581, player, 0, 0, BuffType::INNATE, 7); //
+//	message = message && doEnhanceCharacter(0x3EC6FCB1, player, 0, 0, BuffType::INNATE, 8); //
+//
+//		if (message && player->isPlayerCreature())
+//			player->sendSystemMessage("\\#FF00FFYou receive DOC/ENT buffs according to your player level, calculated with your currently equipped weapon.");
 
-	message = message && doEnhanceCharacter(0x11C1772E, player, performanceBuff, performanceDuration, BuffType::PERFORMANCE, 6); // performance_enhance_dance_mind
-	message = message && doEnhanceCharacter(0x2E77F586, player, performanceBuff, performanceDuration, BuffType::PERFORMANCE, 7); // performance_enhance_music_focus
-	message = message && doEnhanceCharacter(0x3EC6FCB6, player, performanceBuff, performanceDuration, BuffType::PERFORMANCE, 8); // performance_enhance_music_willpower
+		//selfbuff
+	int selfMedBuff = 1500;//
+	int selfStrengthMind = player->getBaseHAM(CreatureAttribute::MIND) * 1.25;//25% is half of vanilla 50%
+	int selfStrengthFocus = player->getBaseHAM(CreatureAttribute::FOCUS) * 1.25;//.625 is half of 125
+	int selfStrengthWill = player->getBaseHAM(CreatureAttribute::WILLPOWER) * 1.25;//1.0== 100%
+	int selfDuration =	480; //8 hr ;
+
+	message = message && doEnhanceCharacter(0x98321369, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 0); // medical_enhance_health
+	message = message && doEnhanceCharacter(0x815D85C5, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 1); // medical_enhance_strength
+	message = message && doEnhanceCharacter(0x7F86D2C6, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 2); // medical_enhance_constitution
+	message = message && doEnhanceCharacter(0x4BF616E2, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 3); // medical_enhance_action
+	message = message && doEnhanceCharacter(0x71B5C842, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 4); // medical_enhance_quickness
+	message = message && doEnhanceCharacter(0xED0040D9, player, selfMedBuff, selfDuration * 60, BuffType::MEDICAL, 5); // medical_enhance_stamina
+
+//	message = message && doEnhanceCharacter(0x11C1772E, player, selfStrengthMind, selfDuration * 60, BuffType::PERFORMANCE, 6); // performance_enhance_dance_mind
+//	message = message && doEnhanceCharacter(0x2E77F586, player, selfStrengthFocus, selfDuration * 60, BuffType::PERFORMANCE, 7); // performance_enhance_music_focus
+//	message = message && doEnhanceCharacter(0x3EC6FCB6, player, selfStrengthWill, selfDuration * 60, BuffType::PERFORMANCE, 8); // performance_enhance_music_willpower
 
 	if (message && player->isPlayerCreature())
-		player->sendSystemMessage("An unknown force strengthens you for battles yet to come.");
+		player->sendSystemMessage("You receive Doctor buffs.");
 }
 
 void PlayerManagerImplementation::sendAdminJediList(CreatureObject* player) {

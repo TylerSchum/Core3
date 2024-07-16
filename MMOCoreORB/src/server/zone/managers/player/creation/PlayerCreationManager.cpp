@@ -502,17 +502,16 @@ bool PlayerCreationManager::createCharacter(ClientCreateCharacterCallback* callb
 					} catch (const DatabaseException& e) {
 						error(e.getMessage());
 					}
+					Time lastCreatedTime = lastCreatedCharacter.get(accID);
 
 					Locker locker(&charCountMutex);
 
 					lastCreatedTime.updateToCurrentTime();
 
 					lastCreatedCharacter.put(accID, lastCreatedTime);
-					} else {
-						lastCreatedCharacter.put(accID, Time());
-					}
+				} else {
+					lastCreatedCharacter.put(accID, Time());
 				}
-
 			} catch (Exception& e) {
 				error(e.getMessage());
 			}

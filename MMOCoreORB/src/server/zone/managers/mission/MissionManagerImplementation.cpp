@@ -179,6 +179,10 @@ void MissionManagerImplementation::handleMissionListRequest(MissionTerminal* mis
 			player->sendSystemMessage("@mission/mission_generic:not_bounty_hunter_terminal");
 			return;
 		}
+//		if (!player->hasSkill("combat_bountyhunter_novice") |! player->hasSkill("force_title_jedi_rank_03")) { //	!player->getPlayerObject()->getJediState() >= 4
+//			player->sendSystemMessage("@mission/mission_generic:not_bounty_hunter_terminal");
+//			return;
+//		}
 	}
 
 	ManagedReference<CityRegion*> terminalCity = missionTerminal->getCityRegion().get();
@@ -252,7 +256,7 @@ void MissionManagerImplementation::handleMissionAccept(MissionTerminal* missionT
 	}
 
 	//Limit to two missions (only one of them can be a bounty mission)
-	if (missionCount >= 2 || (hasBountyMission && mission->getTypeCRC() == MissionTypes::BOUNTY)) {
+	if (missionCount >= 4 || (hasBountyMission && mission->getTypeCRC() == MissionTypes::BOUNTY)) {
 		StringIdChatParameter stringId("mission/mission_generic", "too_many_missions");
 		player->sendSystemMessage(stringId);
 		return;
@@ -761,7 +765,7 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 	if (difficulty == 5)
 		difficulty = 4;
 
-	int diffDisplay = difficultyLevel < 5 ? 4 : difficultyLevel;
+	int diffDisplay = difficultyLevel + 7;
 
 	if (player->isGrouped()) {
 		bool includeFactionPets = faction != Factions::FACTIONNEUTRAL || ConfigManager::instance()->includeFactionPetsForMissionDifficulty();
@@ -779,6 +783,12 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 
 	if (levelSelect > 0) {
 		diffDisplay = levelSelect;
+	}
+
+	int levelselect = ghost->getExperience("mission_level_choice");
+
+	if (levelselect > 0) {
+		diffDisplay = levelselect;
 	}
 
 	String building = lairTemplateObject->getMissionBuilding(difficulty);
@@ -809,7 +819,7 @@ void MissionManagerImplementation::randomizeGenericDestroyMission(CreatureObject
 		distance += System::random(destroyMissionRandomDistance) + System::random(destroyMissionDifficultyRandomDistance * difficultyLevel);
 		distance /= 2;
 		if (distance > 800)
-			distance = 800;
+			distance = 800 - System::random(20);
 		startPos = player->getWorldCoordinate((float)distance, (float)System::random(360), false);
 
 		if (zone->isWithinBoundaries(startPos)) {
@@ -1003,6 +1013,9 @@ void MissionManagerImplementation::randomizeGenericBountyMission(CreatureObject*
 		level = 2;
 		randomTexts = 50;
 	}
+	if (player->hasSkill("force_title_jedi_rank_03")) {
+		level = 3;
+	}
 
 	NameManager* nm = processor->getNameManager();
 
@@ -1093,10 +1106,29 @@ void MissionManagerImplementation::randomizeGenericBountyMission(CreatureObject*
 			String creatorName = "a Concerned Citizen";
 
 			mission->setCreatorName(creatorName);
-			mission->setMissionTitle(stfFile, "m" + String::valueOf(randTexts) + "t");
+
+			mission->setMissionTitle("", "\\#FFFF00***PLAYER JEDI***");
+			if (creature->getFaction() == Factions::FACTIONIMPERIAL)	mission->setMissionTitle("", "\\#0000FF***IMPERIAL PLAYER JEDI***");
+			if (creature->getFaction() == Factions::FACTIONREBEL)	mission->setMissionTitle("", "\\#FF0000***REBEL PLAYER JEDI***");
+			if (creature->getFaction() == Factions::FACTIONNEUTRAL)		mission->setMissionTitle("", "\\#FFFF00***NEUTRAL PLAYER JEDI***");
+//			mission->setMissionTitle(stfFile, "m" + String::valueOf(randTexts) + "t");
 			mission->setMissionDescription(stfFile, "m" + String::valueOf(randTexts) + "d");
 		}
 	} else {
+
+//		LairSpawn* randomLairSpawn = getRandomLairSpawn(player, faction, MissionTypes::BOUNTY);//using destroy causes bugs, using bounty causes crash when opening term
+//		String lairTemplate = randomLairSpawn->getLairTemplateName();
+//		LairTemplate* lairTemplateObject = CreatureTemplateManager::instance()->getLairTemplate(lairTemplate.hashCode());
+//
+//	 	const VectorMap<String, int>* mobiles = lairTemplateObject->getMobiles();
+//	 	String mobileName = "unknown";
+//
+//	 	if (mobiles->size() > 0) {
+//	 		mobileName = mobiles->elementAt(0).getKey();
+//	 	}
+//
+//	 	mission->setMissionTargetName(mobileName.replaceAll("_", " "));
+
 		mission->setMissionTargetName(nm->makeCreatureName());
 
 		String planet = playerZone->getZoneName();
@@ -1815,6 +1847,14 @@ LairSpawn* MissionManagerImplementation::getRandomLairSpawn(CreatureObject* play
 		}
 	}
 
+	ManagedReference<PlayerObject* > ghost = player->getPlayerObject();
+
+	int levelselect = ghost->getExperience("mission_level_choice");
+
+	if (levelselect > 0) {
+		playerLevel = levelselect;
+	}
+
 	LairSpawn* lairSpawn = nullptr;
 
 	//Cap the minLevel to prevent a group from being too high to get missions on a planet
@@ -2035,7 +2075,7 @@ bool MissionManagerImplementation::isBountyValidForPlayer(CreatureObject* player
 		Time currentTime;
 		uint64 curTime = currentTime.getMiliTime();
 
-		if (lastBountyKill > 0 && (curTime - lastBountyKill) < playerBountyKillBuffer)
+		if (lastBountyKill > 0 && (curTime - lastBountyKill) < playerBountyKillBuffer)//3hr
 			return false;
 
 	}

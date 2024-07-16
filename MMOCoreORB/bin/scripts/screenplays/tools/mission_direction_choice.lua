@@ -1,8 +1,30 @@
+-- Allows players to choose the direction they want to take destroy missions
+--
+--							N 90
+--							|
+--					NW 135  |	NE 45
+--						  \ | /
+--						   \|/
+--			W 180 ----------+---------- E 0 and 360
+--						   /|\
+--						  / | \
+--					SW 225	|  SE 315
+--							|
+--							S 270
+
 mission_direction_choice = ScreenPlay:new {
 	numberOfActs = 1,
 
 	directions = {
+		{dirDesc = "Reset Direction", dirSelect = 0},
+--		{dirDesc = "North", dirSelect = 90},
+--		{dirDesc = "North East", dirSelect = 45},
 		{dirDesc = "Player Facing Direction", dirSelect = 360}, 
+--		{dirDesc = "South East", dirSelect = 315}, 
+--		{dirDesc = "South", dirSelect = 270}, 
+--		{dirDesc = "South West", dirSelect = 225}, 
+--		{dirDesc = "West", dirSelect = 180}, 
+--		{dirDesc = "North West", dirSelect = 135}, 
 	}
 }
 

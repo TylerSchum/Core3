@@ -374,6 +374,32 @@ bool SkillManager::awardSkill(const String& skillName, CreatureObject* creature,
 
 	SkillModManager::instance()->verifySkillBoxSkillMods(creature);
 
+
+	if (skill->getSkillName() == "social_politician_novice") {
+		awardSkill("social_politician_master", creature, true, true, true);
+	}
+
+	if (skill->getSkillName() == "crafting_merchant_novice") {
+		awardSkill("crafting_merchant_master", creature, true, true, true);
+	}
+
+	if (skill->getSkillName() == "force_rank_dark_rank_05" || creature->hasSkill("force_rank_dark_rank_05")) {
+		awardSkill("force_title_jedi_rank_04", creature, true, true, true);
+
+	}
+	if (skill->getSkillName() == "force_rank_light_rank_05" || creature->hasSkill("force_rank_light_rank_05")) {
+		awardSkill("force_title_jedi_rank_04", creature, true, true, true);
+
+	}
+	if (skill->getSkillName() == "force_rank_dark_rank_10" || creature->hasSkill("force_rank_dark_rank_10")) {
+		awardSkill("force_title_jedi_master", creature, true, true, true);
+
+	}
+	if (skill->getSkillName() == "force_rank_light_rank_10" || creature->hasSkill("force_rank_light_rank_10")) {
+		awardSkill("force_title_jedi_master", creature, true, true, true);
+
+	}
+
 	return true;
 }
 

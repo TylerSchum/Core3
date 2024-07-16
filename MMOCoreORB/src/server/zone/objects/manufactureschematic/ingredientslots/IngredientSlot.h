@@ -131,7 +131,7 @@ public:
 	}
 
 	int getQuantityNeeded() {
-		return requiredQuantity;
+		return requiredQuantity;//setting this to 1 breaks all draft schems
 	}
 
 	virtual bool add(CreatureObject* player, SceneObject* satchel, ManagedReference<TangibleObject*> tano) {

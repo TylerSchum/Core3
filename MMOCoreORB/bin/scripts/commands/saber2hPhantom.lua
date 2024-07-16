@@ -44,8 +44,7 @@
 Saber2hPhantomCommand = {
 	name = "saber2hphantom",
 
-	damageMultiplier = 4.5,
-	accuracyBonus = 50,
+	damageMultiplier = 4.0,
 	speedMultiplier = 4.0,
 	healthCostMultiplier = 0,
 	actionCostMultiplier = 0,
@@ -85,7 +84,7 @@ Saber2hPhantomCommand = {
 		)
 	},
 
-	animation = "combo_jedi_2",
+	animation = "showoff_1", 
 	animType = GENERATE_INTENSITY,
 
 	combatSpam = "saber2hphantom",

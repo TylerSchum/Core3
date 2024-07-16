@@ -385,10 +385,6 @@ public:
 		uint32 buffPower = getEnhancePackStrength(enhancePack, enhancer, patient);
 
 		auto zoneServer = server->getZoneServer();
-
-		if (zoneServer == nullptr)
-			return GENERALERROR;
-
 		auto playerMan = zoneServer->getPlayerManager();
 
 		if (playerMan == nullptr)

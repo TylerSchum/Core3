@@ -22,12 +22,27 @@ void LightsaberObjectMenuComponent::fillObjectMenuResponse(SceneObject* sceneObj
 	if(weapon == nullptr)
 		return;
 
+//	if(weapon->isASubChildOf(player)) {
+//
+//		if(weapon->hasPowerup()) {
+//			menuResponse->addRadialMenuItem(71, 3, "@powerup:mnu_remove_powerup"); // Remove Powerup
+//		}
+//
+//		if(weapon->getConditionDamage() > 0 && weapon->canRepair(player)) {
+//			menuResponse->addRadialMenuItem(70, 3, "@sui:repair"); // Slice
+//		}
+//	}
+
 	TangibleObjectMenuComponent::fillObjectMenuResponse(sceneObject, menuResponse, player);
 
 	String text = "@jedi_spam:open_saber";
 	menuResponse->addRadialMenuItem(89, 3, text);
 	if(player->hasSkill("combat_smuggler_slicing_02"))
 		menuResponse->addRadialMenuItem(69, 3, "@slicing/slicing:slice");
+
+	if(player->hasSkill("combat_smuggler_slicing_02"))
+		menuResponse->addRadialMenuItem(69, 3, "@slicing/slicing:slice"); // this makes it work forpre patch sabers
+
 
 }
 

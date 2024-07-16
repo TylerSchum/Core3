@@ -43,7 +43,7 @@ ExperienceConverter = ScreenPlay:new {
 		},
 		reflex = {
 			{ "jedi_general", 1 },
-			{ "bountyhunter", 1 },
+			{ "bountyhunter", 5 },
 			{ "combat_general", 3 },
 			{ "combat_meleespecialize_onehand", 30 },
 			{ "combat_meleespecialize_polearm", 30 },

@@ -71,35 +71,20 @@ void WearableObjectImplementation::generateSockets(CraftingValues* craftingValue
 
 				skill = player->getSkillMod(assemblySkill);
 
-				if (MIN_SOCKET_MOD > skill)
-					return;
-
 				luck = System::random(player->getSkillMod("luck") + player->getSkillMod("force_luck"));
 			}
 		}
 	}
 
-	skill -= MIN_SOCKET_MOD;
-	int bonusMod = 65 - skill;
+	int random = (System::random(750)) - 250; // -250 to 500
 
-	if (bonusMod <= 0) {
-		bonusMod = 0;
-	} else {
-		bonusMod = System::random(bonusMod);
-	}
+	float roll = System::random(skill / 10);// + luck + random);
 
-	int skillAdjust = skill + System::random(luck) + bonusMod;
-	int maxMod = 65 + System::random(skill);
-
-	float randomSkill = System::random(skillAdjust) * 10;
-	float roll = randomSkill / (400.f + maxMod);
-
-	float generatedCount = roll * MAXSOCKETS;
-
+	int generatedCount = 4 + roll;
 	if (generatedCount > MAXSOCKETS)
 		generatedCount = MAXSOCKETS;
-	else if (generatedCount > 3 && generatedCount <= 3.75f)
-		generatedCount = floor(generatedCount);
+	if (generatedCount < 0)
+		generatedCount = 0;
 
 	usedSocketCount = 0;
 	socketCount = (int)generatedCount;
@@ -119,7 +104,6 @@ void WearableObjectImplementation::applyAttachment(CreatureObject* player, Attac
 		if (isEquipped()) {
 			player->sendSystemMessage("*** You can not add a Skill Enhancing Attachment to an item while it is equipped ***");
 			return;
-			removeSkillModsFrom(player);
 		}
 
 		HashTable<String, int>* mods = attachment->getSkillMods();
@@ -225,8 +209,11 @@ String WearableObjectImplementation::repairAttempt(int repairChance) {
 	String message = "@error_message:";
 
 	if(repairChance < 25) {
-		message += "sys_repair_failed";
-		setMaxCondition(1, true);
+//		message += "sys_repair_failed";
+//		setMaxCondition(1, true);
+//		setConditionDamage(0, true);
+		message += "sys_repair_imperfect";
+		setMaxCondition(getMaxCondition() * .65f, true);
 		setConditionDamage(0, true);
 	} else if(repairChance < 50) {
 		message += "sys_repair_imperfect";

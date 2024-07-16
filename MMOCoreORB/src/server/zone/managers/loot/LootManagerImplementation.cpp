@@ -386,8 +386,8 @@ void LootManagerImplementation::setRandomLootValues(TransactionLog& trx, Tangibl
 			}
 			attrDebugEntry["min"] = min;
 			attrDebugEntry["max"] = max;
+			attrDebug[attribute] = attrDebugEntry;
 		}
-		attrDebug[attribute] = attrDebugEntry;
 
 		if (!attrDebug.empty()) {
 			trx.addState("lootAttributeDebug", attrDebug);
@@ -403,7 +403,7 @@ void LootManagerImplementation::setSockets(TangibleObject* object, float excMod)
 	if (excMod > legendaryModifier) {
 		wearableObject->setMaxSockets(10);
 	}
-	wearableObject->setMaxSocket(System::random(5) + 5);
+	wearableObject->setMaxSockets(System::random(5) + 5);
 }
 
 TangibleObject* LootManagerImplementation::createLootObject(TransactionLog& trx, const LootItemTemplate* templateObject, int level, bool maxCondition) {
@@ -449,10 +449,6 @@ TangibleObject* LootManagerImplementation::createLootObject(TransactionLog& trx,
 
 	// Calculate level rank value chance
 	float excMod = 1.0 + (System::random(15) / 10);
-	float chance = legendaryChance + chanceModifier;
-	if (chance > 20) {
-		chance = 20;
-	}
 	float levelChance = 100;
 	if (level > levelChance)
 		levelChance = level;
@@ -485,7 +481,7 @@ TangibleObject* LootManagerImplementation::createLootObject(TransactionLog& trx,
 	}
 
 	if (prototype->isWearableObject()) {
-		setSockets(prototype);
+		setSockets(prototype, excMod);
 	}
 
 	// Add some condition damage to the looted item if it is a weapon or piece of armor
@@ -493,7 +489,7 @@ TangibleObject* LootManagerImplementation::createLootObject(TransactionLog& trx,
 		addConditionDamage(prototype);
 	}
 
-	trx.addState("lootAdjustment", chance);
+	trx.addState("lootAdjustment", excMod);
 	trx.addState("lootExcMod", excMod);
 	trx.addState("lootJunkValue", prototype->getJunkValue());
 	trx.addState("lootConditionDmg", prototype->getConditionDamage());
@@ -711,15 +707,12 @@ bool LootManagerImplementation::createLootFromCollection(TransactionLog& trx, Sc
 		const LootGroupCollectionEntry* collectionEntry = lootCollection->get(i);
 		int lootChance = collectionEntry->getLootChance();
 
-		if (lootChance <= 0)
-			continue;
+		//if (lootChance <= 0)
+		//	continue;
 
 		int roll = System::random(10000000 / 2);
 
 		rolls.add(roll);
-
-		if (roll > lootChance)
-			continue;
 
  		// Start at 0
 		int tempChance = 0;
@@ -750,7 +743,7 @@ bool LootManagerImplementation::createLootFromCollection(TransactionLog& trx, Sc
 
 			objectID = createLoot(trx, container, groupEntry->getLootGroupName(), level);
 
-			break;
+			//break;
 		}
 	}
 

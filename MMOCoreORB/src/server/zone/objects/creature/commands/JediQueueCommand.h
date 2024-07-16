@@ -223,6 +223,8 @@ public:
 		if (controlModifier == 0 || buffModifier == 0)
 			return amount;
 
+		controlModifier += 25;
+
 		return amount + (int)((controlModifier * buffModifier) + 0.5f);
 	}
 
@@ -256,6 +258,8 @@ public:
 		if (manipulationMod == 0 || frsModifier == 0)
 			return forceCost;
 
+		manipulationMod += 25;
+
 		return forceCost + (int)((manipulationMod * frsModifier) + .5);
 	}
 
@@ -287,6 +291,8 @@ public:
 
 		if (manipulationMod == 0 || frsModifier == 0)
 			return val;
+
+		manipulationMod += 25;
 
 		return val + ((float)manipulationMod * frsModifier);
 	}

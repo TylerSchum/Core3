@@ -89,7 +89,6 @@ object_tangible_wearables_armor_chitin_armor_chitin_s01_bracer_l = object_tangib
 
 	-- Damagetypes in WeaponObject
 	vulnerability = STUN + LIGHTSABER,
-
 	-- These are default Blue Frog stats
 	healthEncumbrance = 13,
 	actionEncumbrance = 13,

@@ -597,7 +597,7 @@ class PlayerManager extends Observer implements Logger {
 	 * @post { player is locked }
 	 */
 	public native void enhanceCharacter(CreatureObject player);
-
+	
 	/**
 	 * Creates and adds buff to Player
 	 * @pre { player is locked }

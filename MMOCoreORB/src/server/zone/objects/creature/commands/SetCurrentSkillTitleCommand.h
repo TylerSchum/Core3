@@ -28,6 +28,10 @@ public:
 
 		String titleSkill = arguments.toString().toLowerCase();
 
+//		titleSkill = titleSkill.replaceAll("skl_t:[", "");
+//		//titleSkill = titleSkill.replaceAll("[", "");
+//		titleSkill = titleSkill.replaceAll("]", "");
+
 		if (!titleSkill.isEmpty() && !creature->hasSkill(titleSkill))
 			return GENERALERROR;
 

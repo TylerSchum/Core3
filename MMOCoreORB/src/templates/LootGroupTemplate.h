@@ -46,13 +46,19 @@ public:
 	String getLootGroupEntryForRoll(int roll) const {
 		int totalChance = 0;
 
+		roll = System::random(entryMap.size());
+
+//		for (int i = 0; i < entryMap.size(); ++i) {
+//			roll += 1;
+//		}
+
 		for (int i = 0; i < entryMap.size(); ++i) {
 			VectorMapEntry<String, int>* entry = &entryMap.elementAt(i);
-			int weight = entry->getValue();
+			//int weight = entry->getValue();
 
-			totalChance += weight;
+			totalChance += 1;
 
-			if (totalChance >= roll && weight > 0)
+			if (totalChance >= roll) //&& weight > 0)
 				return entry->getKey();
 		}
 
@@ -63,12 +69,15 @@ public:
 	int getLootGroupIntEntryForRoll(int roll) const {
 		int totalChance = 0;
 
+		roll = System::random(entryMap.size());
+
 		for (int i = 0; i < entryMap.size(); ++i) {
 			VectorMapEntry<String, int>* entry = &entryMap.elementAt(i);
-			int weight = entry->getValue();
-			totalChance += weight;
+			//int weight = entry->getValue();
 
-			if (totalChance >= roll && weight > 0 )
+			totalChance += 1;//weight;
+
+			if (totalChance >= roll)// && weight > 0 )
 				return i;
 		}
 

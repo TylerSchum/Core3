@@ -79,7 +79,6 @@ object_tangible_wearables_armor_padded_armor_padded_s01_helmet = object_tangible
 
 	-- Damage types in WeaponObject
 	vulnerability = STUN + LIGHTSABER,
-
 	-- These are default Blue Frog stats
 	healthEncumbrance = 1,
 	actionEncumbrance = 1,

@@ -68,7 +68,7 @@ SuppressionFire2Command = {
 	animation = "fire_defender_posture_change_down",
 
 	combatSpam = "sup_fire",
-
+	
 	weaponType = RIFLEWEAPON + PISTOLWEAPON + CARBINEWEAPON,
 
 	range = -1

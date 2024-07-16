@@ -89,7 +89,6 @@ object_tangible_wearables_armor_zam_armor_zam_wesell_chest_plate_quest = object_
 	
 	-- Damage types in WeaponObject
 	vulnerability = STUN + LIGHTSABER,
-
 	-- These are default Blue Frog stats
 	healthEncumbrance = 84,
 	actionEncumbrance = 21,

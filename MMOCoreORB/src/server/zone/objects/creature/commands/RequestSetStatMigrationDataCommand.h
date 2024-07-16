@@ -91,7 +91,6 @@ public:
 		if ((zone != nullptr && zone->getZoneName() == "tutorial") || privilegedPlayer || salon != nullptr) {
 			creature->clearBuffs(true, false);
 			session->migrateStats();
-
 			if (privilegedPlayer) {
 				creature->sendSystemMessage("Stat Migration Permitted due to Staff Privileges.");
 			}

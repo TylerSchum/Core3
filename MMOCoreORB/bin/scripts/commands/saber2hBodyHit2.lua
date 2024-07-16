@@ -53,13 +53,13 @@ Saber2hBodyHit2Command = {
 	forceCostMultiplier = 1.25,
 	visMod = 25,
 
-	animation = "combo_4a",
+	animation = "combo_4a", 
 	animType = GENERATE_INTENSITY,
 
 	combatSpam = "saber2hbodyhit2",
 
 	poolsToDamage = HEALTH_ATTRIBUTE,
-
+	
 	weaponType = JEDIWEAPON,
 
 	range = -1

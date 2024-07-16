@@ -9,6 +9,7 @@
 #include "server/zone/ZoneServer.h"
 #include "server/zone/Zone.h"
 #include "server/zone/SpaceZone.h"
+#include "server/zone/objects/player/sui/messagebox/SuiMessageBox.h"
 
 #include "server/zone/managers/player/PlayerManager.h"
 #include "server/zone/managers/name/NameManager.h"
@@ -50,7 +51,6 @@
 #include "server/chat/room/ChatRoomMap.h"
 #include "templates/string/StringFile.h"
 #include "templates/faction/Factions.h"
-#include "server/zone/objects/player/sui/messagebox/SuiMessageBox.h"
 
 ChatManagerImplementation::ChatManagerImplementation(ZoneServer* serv, int initsize) : ManagedServiceImplementation() {
 	server = serv;
@@ -978,7 +978,7 @@ void ChatManagerImplementation::broadcastGalaxy(const String& message, const Str
 
 		ManagedReference<SuiMessageBox*> box = new SuiMessageBox(playerObject, SuiWindowType::NONE);
 		box->setPromptTitle("NOTICE!");
-		box->setPromptText(stringMessage);
+		box->setPromptText(message);
 
 		PlayerObject* ghost = playerObject->getPlayerObject();
 
@@ -1014,7 +1014,17 @@ void ChatManagerImplementation::broadcastGalaxy(CreatureObject* creature, const 
 	while (playerMap->hasNext(false)) {
 		ManagedReference<CreatureObject*> playerObject = playerMap->getNextValue(false);
 
-		playerObject->sendSystemMessage(stringMessage);
+		//playerObject->sendSystemMessage(stringMessage);
+
+		ManagedReference<SuiMessageBox*> box = new SuiMessageBox(playerObject, SuiWindowType::NONE);
+		box->setPromptTitle("mySWG ALERT!");
+		box->setPromptText(stringMessage);
+
+		PlayerObject* ghost = playerObject->getPlayerObject();
+
+		ghost->addSuiBox(box);
+		playerObject->sendMessage(box->generateMessage());
+
 	}
 }
 

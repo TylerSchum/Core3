@@ -1685,7 +1685,6 @@ trainerSkills = {
 --    "force_rank_light_master", 
 --    "force_rank_dark_master"
 	},
-
 	trainer_frs_dark = {
 	--	"force_rank_dark_novice", 
 		"force_rank_dark_rank_01",
@@ -1700,7 +1699,6 @@ trainerSkills = {
 		"force_rank_dark_rank_10",
     "force_rank_dark_master", 
 	},
-
 		trainer_frs_light = {
 	--	"force_rank_light_novice", 
 		"force_rank_light_rank_01",
@@ -1715,7 +1713,6 @@ trainerSkills = {
 		"force_rank_light_rank_10",
     "force_rank_light_master", 
 	},
-
 	trainer_myswg = {
 		"crafting_artisan_novice",
 		"crafting_artisan_master",

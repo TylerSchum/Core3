@@ -86,6 +86,47 @@ bool CombatManager::startCombat(CreatureObject* attacker, TangibleObject* defend
 		return false;
 	}
 
+	//CreatureObject *creoatt = defender->asCreatureObject();
+//	ManagedReference<WeaponObject*> weapon = creo->getWeapon();
+
+//	if (weapon != nullptr && weapon->isJediWeapon()){
+//
+//		float minDamage = weapon->getMinDamage(), maxDamage = weapon->getMaxDamage();
+//
+//		if (weapon->asTangibleObject()->isSliced() ||
+//		minDamage > 2000 ||	minDamage < 1 ||
+//			maxDamage > 4000 || maxDamage < 1)
+//		{
+//
+////			Locker wlocker(weapon);
+////			weapon->destroyObjectFromWorld( true );
+////			weapon->destroyObjectFromDatabase( true );
+//
+//			weapon->setMinDamage(1);//these work but introduce new problems
+//			weapon->setMaxDamage(1);
+//
+////			notifyObjectDestructionObservers(attacker, newConditionDamage, isCombatAction);
+////			notifyObservers(ObserverEventType::OBJECTDISABLED, attacker);
+//
+//
+//			//weapon->setDisabled(true);
+//
+//			//ManagedReference<TangibleObject*> obj = cast<TangibleObject*>(weapon);
+//
+//			Locker wlocker(weapon);//works but causes problems
+//			weapon->inflictDamage(weapon, 0, weapon->getMaxCondition(), true, true);
+//
+//
+//			creo->sendSystemMessage("All sliced lightsabers have been hacked by the empire and DESTROYED!");
+//
+//			//return false;
+//		}
+//
+////		if (weapon->isSliced){
+////
+////		}
+//	}
+
 	attacker->clearState(CreatureState::PEACE);
 
 	if (attacker->isPlayerCreature() && !attacker->hasDefender(defender)) {
@@ -97,6 +138,7 @@ bool CombatManager::startCombat(CreatureObject* attacker, TangibleObject* defend
 	}
 
 	Locker clocker(defender, attacker);
+//	ManagedReference<WeaponObject*> weapon = creo->getWeapon();
 
 	if (creo != nullptr && creo->isPlayerCreature() && !creo->hasDefender(attacker)) {
 		ManagedReference<WeaponObject*> weapon = creo->getWeapon();
@@ -1178,16 +1220,6 @@ float CombatManager::calculateDamage(CreatureObject* attacker, WeaponObject* wea
 
 	damage += defender->getSkillMod("private_damage_susceptibility");
 
-	if (attacker->isPlayerCreature()) {
-		if (data.isForceAttack() && !defender->isPlayerCreature())
-			damage *= 2 + System::random(1);
-		else if (!data.isForceAttack())
-			damage *= 1.5;
-	}
-
-	if (!data.isForceAttack() && weapon->getAttackType() == SharedWeaponObjectTemplate::MELEEATTACK)
-		damage *= 1.25;
-
 	if (defender->isKnockedDown()) {
 		damage *= 1.5f;
 	} else if (data.isForceAttack() && data.getCommandName().hashCode() == STRING_HASHCODE("forcechoke")) {
@@ -1196,12 +1228,12 @@ float CombatManager::calculateDamage(CreatureObject* attacker, WeaponObject* wea
 		else if (defender->isKneeling())
 			damage *= 1.25f;
 	}
-
 	// Toughness reduction
 	if (data.isForceAttack())
 		damage = getDefenderToughnessModifier(defender, SharedWeaponObjectTemplate::FORCEATTACK, data.getDamageType(), damage);
 	else
 		damage = getDefenderToughnessModifier(defender, weapon->getAttackType(), weapon->getDamageType(), damage);
+
 
 	// Force Defense skillmod damage reduction
 	if (data.isForceAttack()) {
@@ -1255,19 +1287,6 @@ float CombatManager::calculateDamage(CreatureObject* attacker, WeaponObject* wea
 
 	damage = applyDamageModifiers(attacker, weapon, damage, data);
 
-	if (defender->isKnockedDown()) {
-		damage *= 1.5f;
-	} else if (data.isForceAttack() && data.getCommandName().hashCode() == STRING_HASHCODE("forcechoke")) {
-		if  (defender->isProne())
-			damage *= 1.5f;
-		else if (defender->isKneeling())
-			damage *= 1.25f;
-	}
-
-	if (data.isForceAttack())
-		damage = getDefenderToughnessModifier(defender, SharedWeaponObjectTemplate::FORCEATTACK, data.getDamageType(), damage);
-	else
-		damage = getDefenderToughnessModifier(defender, weapon->getAttackType(), weapon->getDamageType(), damage);
 	debug() << "damage to be dealt is " << damage;
 
 	ManagedReference<LairObserver*> lairObserver = nullptr;
@@ -1985,14 +2004,14 @@ void CombatManager::applyWeaponDots(CreatureObject* attacker, CreatureObject* de
 			continue;
 
 		int weapondotstr = weapon->getDotStrength(i);
-		if (weapdotstr > 125)
-			weapdotstr = ((weapdotstr - 125) / 2) + 125;
-		if (weapdotstr > 250)
-			weapdotstr = ((weapdotstr - 250) / 5) + 250;
-		if (weapdotstr > 350)
-			weapdotstr = ((weapdotstr - 350) / 10) + 350;
+		if (weapondotstr > 125)
+			weapondotstr = ((weapondotstr - 125) / 2) + 125;
+		if (weapondotstr > 250)
+			weapondotstr = ((weapondotstr - 250) / 5) + 250;
+		if (weapondotstr > 350)
+			weapondotstr = ((weapondotstr - 350) / 10) + 350;
 
-		if (weapon->getDotPotency(i) * (1.f - resist / 100.f) > System::random(100) && defender->addDotState(attacker, type, weapon->getObjectID(), weapdotstr, weapon->getDotAttribute(i), weapon->getDotDuration(i), -1, 0, (int)(weapon->getDotStrength(i) / 5.f)) > 0)
+		if (weapon->getDotPotency(i) * (1.f - resist / 100.f) > System::random(100) && defender->addDotState(attacker, type, weapon->getObjectID(), weapondotstr, weapon->getDotAttribute(i), weapon->getDotDuration(i), -1, 0, (int)(weapon->getDotStrength(i) / 5.f)) > 0)
 			if (weapon->getDotUses(i) > 0)
 				weapon->setDotUses(weapon->getDotUses(i) - 1, i); // Unresisted despite mod, reduce use count.
 	}
@@ -2346,7 +2365,7 @@ int CombatManager::getHitChance(TangibleObject* attacker, CreatureObject* creoDe
 			accuracyWeapon = -25;
 		accuracySkill = getAttackerAccuracyModifier(attacker, creoDefender, weapon);
 
-		if (creoAttacker->isPlayerCreature() && targetCreature->isPlayerCreature()) {
+		if (creoAttacker->isPlayerCreature() && creoDefender->isPlayerCreature()) {
 			accuracySkill *= 1.5;
 		}
 
@@ -2645,6 +2664,8 @@ int CombatManager::getArmorNpcReduction(AiAgent* defender, int damageType) const
 		resist = defender->getLightSaber();
 		break;
 	}
+	if (resist > 90)
+		resist = 90;
 
 	if (resist > 90)
 		resist = 90;
@@ -2684,6 +2705,8 @@ int CombatManager::getArmorVehicleReduction(VehicleObject* defender, int damageT
 		resist = defender->getLightSaber();
 		break;
 	}
+	if (resist > 90)
+		resist = 90;
 
 	return (int)resist;
 }
@@ -2845,9 +2868,12 @@ int CombatManager::getArmorReduction(TangibleObject* attacker, WeaponObject* wea
 		}
 
 		// inflict condition damage
-		Locker alocker(armor);
 
-		armor->inflictDamage(armor, 0, damage * 0.2, true, true);
+		if (System::random(4) >= 4) {
+			Locker alocker(armor);
+
+			armor->inflictDamage(armor, 0, 1, true, true);
+		}
 	}
 
 	return damage;

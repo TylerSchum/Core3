@@ -60,8 +60,33 @@ bh_targets_at_mission_level = {
 		"bh_feral_force_wielder", --level 115
 		"bh_force_crystal_hunter", --level 115
 		"bh_tusken_carnage_champion", --level 116
-		"bh_dark_adept" --level 120
-	}
+		"bh_dark_adept", --level 120
+		"dark_adept",
+		"dark_jedi_knight",
+		"dark_jedi_master",
+		"black_sun_assassin",
+		"black_sun_guard",
+		"black_sun_henchman",
+		"black_sun_thug",
+		"death_watch_ghost",
+		"death_watch_bloodguard",
+		"death_watch_wraith",
+		
+		},
+--		level4 = { --this could be jedi on trials mission options
+--				--frs trials npc
+--		"tusken_raider",
+--		"ancient_bull_rancor",
+--		"stintaril_prowler",
+--		"blurrg_raptor",
+--		"enraged_kimogila",
+--		"peko_peko_albatross",
+--		"graul_marauder",
+--		"geonosian_acklay_bunker_boss",
+--		"nightsister_elder",
+--		"gaping_spider_recluse_giant_kiin_dray",
+--		"giant_canyon_krayt_dragon",
+--		}
 }
 
 enable_factional_crafting_missions = "true"
@@ -72,9 +97,9 @@ enable_factional_entertainer_missions = "true"
 
 enable_same_account_bounty_missions = "false"
 
-playerBountyKillBuffer = 30 * 60 * 1000 -- Buffer before player bounty can be put back on terminal after target is killed, set 0 to disable
+playerBountyKillBuffer = 3 * 60 * 60 * 1000	--3hr -- Buffer before player bounty can be put back on terminal after target is killed, set 0 to disable
 
-playerBountyDebuffLength = 3 * 24 * 60 * 60 * 1000 -- Time before their bounty resets from the minimum amount
+playerBountyDebuffLength = 24 * 60 * 60 * 1000 -- Time before their bounty resets from the minimum amount
 
 -- Destroy Mission Configuration
 -- Distance calculated as: 

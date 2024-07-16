@@ -678,6 +678,10 @@ int PlayerObjectImplementation::addExperience(TransactionLog& trx, const String&
 			removeExperience(trx, xpType, notifyClient);
 			return 0;
 		}
+		// -10 million experience cap for Jedi experience loss
+		//else if(xp < -10000000 && xpType == "jedi_general") {
+//			xp = -10000000;
+//		}
 	}
 
 	if (notifyClient) {
@@ -1071,6 +1075,8 @@ void PlayerObjectImplementation::doDigest(int fillingReduction) {
 	if (drinkFilling > drinkFillingMax)
 		drinkFilling = drinkFillingMax;
 
+	fillingReduction *= 2; //speeds up digeston
+
 	if (foodFilling > 0) {
 		setFoodFilling(foodFilling - fillingReduction);
 		if (foodFilling < 0)
@@ -1366,13 +1372,13 @@ void PlayerObjectImplementation::setTitle(const String& characterTitle, bool not
 	if (title == characterTitle)
 		return;
 
-	if(!characterTitle.isEmpty()){
-		Skill* targetSkill = SkillManager::instance()->getSkill(characterTitle);
-
-		if(targetSkill == nullptr || !targetSkill->isTitle()) {
-			return;
-		}
-	}
+//	if(!characterTitle.isEmpty()){
+//		Skill* targetSkill = SkillManager::instance()->getSkill(characterTitle);
+//
+//		if(targetSkill == nullptr || !targetSkill->isTitle()) {
+//			return;
+//		}
+//	}
 
 	title = characterTitle;
 
@@ -2070,6 +2076,7 @@ void PlayerObjectImplementation::doRecovery(int latency) {
 		}
 	}
 
+
 	creature->activateHAMRegeneration(latency);
 	creature->activateStateRecovery();
 
@@ -2081,11 +2088,14 @@ void PlayerObjectImplementation::doRecovery(int latency) {
 		int timeDelta = currentTime.getMiliTime() - lastDigestion.getMiliTime();
 		int fillingReduction = timeDelta / 18000;
 
+		fillingReduction *= 2;
+
 		doDigest(fillingReduction);
 
 		lastDigestion.updateToCurrentTime();
 		cooldownTimerMap->updateToCurrentAndAddMili("digestEvent", 18000);
 	}
+
 
 	if (isOnline()) {
 		if (creature->isInCombat() && creature->getTargetID() != 0 && !creature->isPeaced() && !creature->hasBuff(STRING_HASHCODE("private_feign_buff")) && !creature->hasAttackDelay() && !creature->hasPostureChangeDelay() &&
@@ -2189,6 +2199,7 @@ void PlayerObjectImplementation::activateForcePowerRegen() {
 			regen /= regenDivisor;
 
 		float timer = regen / 5.f;
+
 
 		float scheduledTime = 10 / timer;
 		uint64 miliTime = static_cast<uint64>(scheduledTime * 1000.f);

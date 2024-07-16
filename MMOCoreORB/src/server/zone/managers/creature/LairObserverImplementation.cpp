@@ -296,6 +296,8 @@ bool LairObserverImplementation::checkForNewSpawns(TangibleObject* lair, Tangibl
 
 		amountToSpawn += System::random(amountToSpawn);
 
+		amountToSpawn += System::random(amountToSpawn);
+
 		for (int i = 0; i < amountToSpawn; i++) {
 			int num = System::random(mobiles->size() - 1);
 			const String& mob = mobiles->get(num);

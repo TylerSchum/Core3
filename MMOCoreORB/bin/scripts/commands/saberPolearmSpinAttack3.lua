@@ -67,7 +67,7 @@ SaberPolearmSpinAttack3Command = {
 		)
 	},
 
-	animation = "showoff_1",
+	animation = "counter_low_left", 
 	animType = GENERATE_INTENSITY,
 
 	combatSpam = "saberpolearmspinattack3",

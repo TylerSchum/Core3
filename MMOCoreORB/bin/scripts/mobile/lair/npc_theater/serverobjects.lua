@@ -155,6 +155,7 @@ includeFile("lair/npc_theater/global/global_thief_camp2_neutral_small_theater.lu
 includeFile("lair/npc_theater/global/global_thief_camp_neutral_small_theater.lua")
 includeFile("lair/npc_theater/global/global_wilder_frontiersman_camp_neutral_medium_theater.lua")
 includeFile("lair/npc_theater/global/global_wookiee_brawler_camp_neutral_small_theater.lua")
+includeFile("lair/npc_theater/global_dark_jedi_camp_dark_jedi_theater2.lua")
 
 includeFile("lair/npc_theater/global/rebel_listening_post.lua")
 includeFile("lair/npc_theater/global/imperial_listening_post.lua")

@@ -184,6 +184,14 @@ void CreatureImplementation::fillAttributeList(AttributeListMessage* alm, Creatu
 	}
 }
 
+void CreatureImplementation::scheduleDespawn() {
+	if (getPendingTask("despawn") != nullptr)
+		return;
+
+	Reference<DespawnCreatureTask*> despawn = new DespawnCreatureTask(_this.getReferenceUnsafeStaticCast());
+	addPendingTask("despawn", despawn, 1000 * 60 * 15);
+}
+
 bool CreatureImplementation::hasOrganics() {
 	return ((getHideMax() + getBoneMax() + getMeatMax()) > 0);
 }

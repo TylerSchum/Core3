@@ -1094,6 +1094,7 @@ int LuaCreatureObject::enhanceCharacterEntBuffTWO(lua_State* L) {
 	playerManager->enhanceCharacterEntBuffTWO(realObject);
 
 	return 0;
+}
 
 int LuaCreatureObject::setWounds(lua_State* L) {
 	int amount = lua_tointeger(L, -1);

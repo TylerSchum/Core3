@@ -1,5 +1,6 @@
 JediManager = require("managers.jedi.jedi_manager")
 local ObjectManager = require("managers.object.object_manager")
+local PlayerManager = require("managers.player_manager")
 
 jediManagerName = "HologrindJediManager"
 
@@ -26,7 +27,7 @@ function HologrindJediManager:getGrindableProfessionList()
 		{ "crafting_architect_master", 		CRAFTING_ARCHITECT_MASTER  },
 		{ "crafting_armorsmith_master", 	CRAFTING_ARMORSMITH_MASTER  },
 		{ "crafting_artisan_master", 		CRAFTING_ARTISAN_MASTER  },
-		{ "outdoors_bio_engineer_master", 	OUTDOORS_BIOENGINEER_MASTER  },
+		{ "outdoors_bio_engineer_master", 	OUTDOORS_BIO_ENGINEER_MASTER  },
 		{ "combat_bountyhunter_master", 	COMBAT_BOUNTYHUNTER_MASTER  },
 		{ "combat_brawler_master", 		COMBAT_BRAWLER_MASTER  },
 		{ "combat_carbine_master", 		COMBAT_CARBINE_MASTER  },
@@ -127,7 +128,8 @@ end
 -- @param pCreatureObject pointer to the creature object of the player who unlocked jedi.
 function HologrindJediManager:sendSuiWindow(pCreatureObject)
 	local suiManager = LuaSuiManager()
-	suiManager:sendMessageBox(pCreatureObject, pCreatureObject, "@quest/force_sensitive/intro:force_sensitive", "Perhaps you should meditate somewhere alone...", "@ok", "HologrindJediManager", "notifyOkPressed")
+	--suiManager:sendMessageBox(pCreatureObject, pCreatureObject, "@quest/force_sensitive/intro:force_sensitive", "Perhaps you should meditate somewhere alone...", "@ok", "HologrindJediManager", "notifyOkPressed")
+	suiManager:sendMessageBox(pCreatureObject, pCreatureObject, "Jedi Unlock", "You begin to feel attuned with the power of the Force. Congratulations! This character is now a Jedi. First, you need to find a lightsaber color crystal and craft a lightsaber. Use the command /findmytrainer to create a waypoint to your Jedi skill trainer. Using your Jedi abilities near NPCs or players will gain you visibility bounty hunters. May the force be with you...", "@ok", "HologrindJediManager", "notifyOkPressed")
 end
 
 -- Award skill and jedi status to the player.
@@ -139,7 +141,7 @@ function HologrindJediManager:awardJediStatusAndSkill(pCreatureObject)
 		return
 	end
 
-	awardSkill(pCreatureObject, "force_title_jedi_novice")
+	awardSkill(pCreatureObject, "force_title_jedi_rank_02")
 	PlayerObject(pGhost):setJediState(2)
 end
 
@@ -151,6 +153,7 @@ function HologrindJediManager:checkIfProgressedToJedi(pCreatureObject)
 		self:awardJediStatusAndSkill(pCreatureObject)
 		CreatureObject(pCreatureObject):playEffect("clienteffect/trap_electric_01.cef", "")
 	end
+	
 end
 
 -- Event handler for the BADGEAWARDED event.
@@ -183,6 +186,40 @@ function HologrindJediManager:onPlayerLoggedIn(pCreatureObject)
 
 	self:checkIfProgressedToJedi(pCreatureObject)
 	self:registerObservers(pCreatureObject)
+	
+	PVPFactionIntro:startStepDelay(pCreatureObject, 3)--faction encoutners
+	
+	if CreatureObject(pCreatureObject):hasSkill("force_title_jedi_rank_02") then	
+		PVPBHIntro:startStepDelay(pCreatureObject, 3)
+	end
+		--	if CreatureObject(pCreatureObject):hasSkill("force_title_jedi_rank_01") then	
+--		PlayerObject(pCreatureObject):findmytrainer()
+--	end
+	
+	if CreatureObject(pCreatureObject):hasSkill("force_title_jedi_rank_03") then	
+		PVPFRSIntro:startStepDelay(pCreatureObject, 3)
+	end
+	
+	if JediTrials:isOnKnightTrials(pCreatureObject) then	
+		--KnightTrials:showCurrentTrial(pCreatureObject) --DOES NOT FIX
+		
+		KnightTrials:startNextKnightTrial(pCreatureObject)--this FIXES KNIGHT TRIAL!!!! well sort of its a workaround that resets current trial every logout or server rest.
+
+		--100% fix for knight trial progress
+--			local trialNumber = JediTrials:getCurrentTrial(pCreatureObject)
+--			local trialData = knightTrialQuests[trialNumber]
+--
+--			if (trialData.trialType == TRIAL_HUNT or trialData.trialType == TRIAL_HUNT_FACTION) then
+--				createObserver(KILLEDCREATURE, "KnightTrials", "notifyKilledHuntTarget", pCreatureObject)
+--			end
+		
+	end
+	
+	
+	
+--		suiManager:sendMessageBox(pCreatureObject, pCreatureObject, "WARNING", "all SLICED lightsabers will be destroyed if used in combat! you can still remove the crystals. This will be your only warning.", "@ok", "HologrindJediManager", "notifyOkPressed")
+--	didnt work
+	
 end
 
 -- Get the profession name from the badge number.
@@ -217,6 +254,8 @@ function HologrindJediManager:sendHolocronMessage(pCreatureObject)
 			if not PlayerObject(pGhost):hasBadge(professions[i]) then
 				local professionText = self:getProfessionStringIdFromBadgeNumber(professions[i])
 				CreatureObject(pCreatureObject):sendSystemMessageWithTO("@jedi_spam:holocron_light_information", "@skl_n:" .. professionText)
+				--CreatureObject(pCreatureObject):playEffect("clienteffect/trap_electric_01.cef", "")
+				break
 			end
 		end
 
@@ -232,6 +271,13 @@ function HologrindJediManager:useItem(pSceneObject, itemType, pCreatureObject)
 	if (pCreatureObject == nil or pSceneObject == nil) then
 		return
 	end
+	
+	if CreatureObject(pCreatureObject):hasSkill("force_title_jedi_rank_02") then
+			--ForceShrineMenuComponent:doMeditate(pSceneObject, pCreatureObject)
+		VillageJediManagerHolocron.useHolocron(pSceneObject, pCreatureObject)
+		return
+	end
+	
 
 	if CreatureObject(pCreatureObject):hasSkill("force_title_jedi_rank_02") then
 		VillageJediManagerHolocron.useHolocron(pSceneObject, pCreatureObject)

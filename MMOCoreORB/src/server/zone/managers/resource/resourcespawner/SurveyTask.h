@@ -44,13 +44,12 @@ public:
 
 			//Notify any survey mission observers.
 			playerCreature->notifyObservers(ObserverEventType::SURVEY, resourceSpawn, density);
+		} else {
+			playerCreature->sendSystemMessage("Resources can be sampled aywhere.");
 		}
 
 		playerCreature->removePendingTask("survey");
-	} else {
-		// Send System Message that you can still sample
-		playerCreature->sendSystemMessage("Resources can be sampled aywhere.");
-	}
+	};
 };
 
 #endif /* SURVEYTASK_H_ */
