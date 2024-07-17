@@ -1071,6 +1071,8 @@ void PlayerObjectImplementation::doDigest(int fillingReduction) {
 	if (drinkFilling > drinkFillingMax)
 		drinkFilling = drinkFillingMax;
 
+	fillingReduction *= 2;
+
 	if (foodFilling > 0) {
 		setFoodFilling(foodFilling - fillingReduction);
 		if (foodFilling < 0)
@@ -1365,14 +1367,6 @@ void PlayerObjectImplementation::removeIgnore(const String& name, bool notifyCli
 void PlayerObjectImplementation::setTitle(const String& characterTitle, bool notifyClient) {
 	if (title == characterTitle)
 		return;
-
-	if(!characterTitle.isEmpty()){
-		Skill* targetSkill = SkillManager::instance()->getSkill(characterTitle);
-
-		if(targetSkill == nullptr || !targetSkill->isTitle()) {
-			return;
-		}
-	}
 
 	title = characterTitle;
 
@@ -2080,6 +2074,8 @@ void PlayerObjectImplementation::doRecovery(int latency) {
 
 		int timeDelta = currentTime.getMiliTime() - lastDigestion.getMiliTime();
 		int fillingReduction = timeDelta / 18000;
+		
+		fillingReduction *= 2;
 
 		doDigest(fillingReduction);
 

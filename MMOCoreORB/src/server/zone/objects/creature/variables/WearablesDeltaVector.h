@@ -160,7 +160,13 @@ public:
 		return DeltaVector<ManagedReference<TangibleObject*> >::remove(index, message, updates);
 	}
 
-	Vector<ManagedReference<ArmorObject*> > getAvailableArmor(Vector<ManagedReference<ArmorObject*> priorityArmor, Vector<ManagedReference<ArmorObject*> fallback1Armor, Vector<ManagedReference<ArmorObject*> fallback2Armor, Vector<ManagedReference<ArmorObject*> fallback3Armor, Vector<ManagedReference<ArmorObject*> fallback4Armor) const {
+	Vector<ManagedReference<ArmorObject*>> getAvailableArmor(
+		Vector<ManagedReference<ArmorObject*>> priorityArmor,
+		Vector<ManagedReference<ArmorObject*>> fallback1Armor,
+		Vector<ManagedReference<ArmorObject*>> fallback2Armor,
+		Vector<ManagedReference<ArmorObject*>> fallback3Armor,
+		Vector<ManagedReference<ArmorObject*>> fallback4Armor
+	) const {
 		if(!priorityArmor.isEmpty())
 			return priorityArmor;
 		if(!fallback1Armor.isEmpty())
@@ -181,16 +187,16 @@ public:
 		Vector<ManagedReference<ArmorObject*>> legArmor = protectionArmorMap.get((uint8)ArmorObjectTemplate::LEGS);
 		Vector<ManagedReference<ArmorObject*>> headArmor = protectionArmorMap.get((uint8)ArmorObjectTemplate::HEAD);
 		// TODO: Migrate and remove this when the object versioning and migration system is in place
-		if (hl == 1) {//chest
+		if (hitLocation == 1) {//chest
 			getAvailableArmor(chestArmor, armArmor, legArmor, headArmor, noLocationArmor);
 		}
-		if (hl == 2 || hl == 3) {//arms
+		if (hitLocation == 2 || hitLocation == 3) {//arms
 			getAvailableArmor(armArmor, chestArmor, legArmor, headArmor, noLocationArmor);
 		}
-		if (hl == 4 || hl == 5) {//legs
+		if (hitLocation == 4 || hitLocation == 5) {//legs
 			getAvailableArmor(legArmor, armArmor, chestArmor, headArmor, noLocationArmor);
 		}
-		if (hl == 6) {//head
+		if (hitLocation == 6) {//head
 			getAvailableArmor(headArmor, armArmor, legArmor, chestArmor, noLocationArmor);
 		}
 		return noLocationArmor;

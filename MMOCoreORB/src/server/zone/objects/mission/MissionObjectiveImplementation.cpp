@@ -335,12 +335,12 @@ void MissionObjectiveImplementation::awardReward() {
 	owner->addBankCredits(dividedReward + bonusCreds, true);
 
 	// Catch any rounding errors etc.
-	trx.addState("missionTotalRewarded", totalRewarded);
+	trx.addState("missionTotalRewarded", dividedReward);
 
 	if (anonymousPlayerBounties)
-		trx.addState("missionTotalBonusRewarded", totalBonusRewarded);
+		trx.addState("missionTotalBonusRewarded", bonusCreds);
 
-	StatisticsManager::instance()->completeMission(mission->getTypeCRC(), totalRewarded);
+	StatisticsManager::instance()->completeMission(mission->getTypeCRC(), dividedReward);
 }
 
 Vector3 MissionObjectiveImplementation::getEndPosition() {

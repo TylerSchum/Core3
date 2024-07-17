@@ -5,6 +5,7 @@
  *      Author: victor
  */
 
+#include "server/zone/managers/jedi/JediManager.h"
 #include "server/zone/objects/player/sessions/EntertainingSession.h"
 #include "server/zone/managers/skill/SkillManager.h"
 #include "server/zone/managers/skill/Performance.h"
@@ -263,6 +264,8 @@ void EntertainingSessionImplementation::doPerformanceAction() {
 
 	int actionDrain = entertainer->calculateCostAdjustment(CreatureAttribute::QUICKNESS, performance->getActionPointsPerLoop()) / 2;
 
+	actionDrain /= 2;
+
 	if (entertainer->getHAM(CreatureAttribute::ACTION) <= actionDrain) {
 		if (isDancing()) {
 			stopDancing();
@@ -330,7 +333,7 @@ void EntertainingSessionImplementation::stopPlaying() {
 		entertainer->dropActiveSession(SessionFacadeType::ENTERTAINING);
 	}
 	if (entertainer->getSkillMod("healing_music_mind") > 0)
-		playerManager->enhanceSelfMusic(entertaniner);
+		playerManager->enhanceSelfMusic(entertainer);
 }
 
 void EntertainingSessionImplementation::stopMusic(bool skipOutro, bool bandStop, bool isBandLeader) {
@@ -659,6 +662,8 @@ void EntertainingSessionImplementation::doFlourish(int flourishNumber, bool gran
 
 	int actionDrain = ((int)round((flourishActionDrain * 10 + 0.5) / 10.0) / 2); // Round to nearest dec for actual int cost
 
+	actionDrain /= 2;
+
 	if (entertainer->getHAM(CreatureAttribute::ACTION) <= actionDrain) {
 		entertainer->sendSystemMessage("@performance:flourish_too_tired");
 	} else {
@@ -708,7 +713,7 @@ void EntertainingSessionImplementation::addEntertainerBuffStrength(CreatureObjec
 
 	float newBuffStrength = buffStrength + strength;
 
-	float maxBuffStrength = (float) entertainer->getSkillMod("healing_dance_mind") + (float) entertainer->getSkillMod("healing_music_mind")
+	float maxBuffStrength = (float) entertainer->getSkillMod("healing_dance_mind") + (float) entertainer->getSkillMod("healing_music_mind");
 
 	if (maxBuffStrength > 125.0f)
 		maxBuffStrength = 125.0f;	//cap at 125% power
@@ -858,28 +863,12 @@ void EntertainingSessionImplementation::activateEntertainerBuff(CreatureObject* 
 		if (!canGiveEntertainBuff())
 			return;
 
-		// Returns the Number of Minutes for the Buff Duration
-		float buffDuration = 8 * 60 * 60;
-
-		if (buffDuration * 60 < 10.0f) { //10 sec minimum buff duration
-			return;
-		}
-
-		//1 minute minimum listen/watch time
-		int timeElapsed = time(0) - getEntertainerBuffStartTime(creature, performanceType);
-		if (timeElapsed < 60) {
-			creature->sendSystemMessage("You must listen or watch a performer for at least 1 minute in order to gain the entertainer buffs.");
-			return;
-		}
-
-		// Returns a % of base stat
-		int campModTemp = 100;
-
-
-		float buffStrength = buffStrength = (entertainer->getSkillMod("healing_dance_mind") + entertainer->getSkillMod("healing_music_mind")) * .01;
+		float buffStrength = (entertainer->getSkillMod("healing_dance_mind") + entertainer->getSkillMod("healing_music_mind")) * .01;
 
 		if (buffStrength == 0)
 			return;
+
+		int buffDuration = 8 * 60 * 60;
 
 		ManagedReference<PerformanceBuff*> oldBuff = nullptr;
 
@@ -1055,10 +1044,7 @@ void EntertainingSessionImplementation::awardEntertainerExperience() {
 				playerManager->awardExperience(player, xptype, xpAmount * 16, true);
 				playerManager->awardExperience(player, healxptype, xpAmount * 8, true);
 			}
-
-			if (playerManager != nullptr)
-				playerManager->awardExperience(player, xptype, xpAmount, true);
-
+			healingXp = 0
 			oldFlourishXp = flourishXp;
 			flourishXp = 0;
 		} else {
